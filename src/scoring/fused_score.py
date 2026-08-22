@@ -5,30 +5,40 @@ def compute_fused_scores(df_scored: pl.DataFrame, explanations: list) -> pl.Data
     for row, exp in zip(df_scored.iter_rows(named=True), explanations):
         risk = float(row["risk_score"])
         
-        # Confidence calculation: Completeness (D) + Evidence Corroboration (E)
-        completeness = float(row.get("completeness_score", 0.5))
-        top_shap_val = exp.get("contribution", 0.0)
-        corroboration = 0.9 if top_shap_val > 0.05 else 0.4
+        # Locked 5-Part Confidence Calculation
+        D = float(row.get("completeness_score", 0.5))
+        E = 0.9 if exp.get("contribution", 0.0) > 0.05 else 0.4
+        S = 0.8
+        G_s = 0.75 if row.get("fan_out_ratio", 0) > 2 else 0.3
+        X = 0.85 if exp.get("top_feature") else 0.2
         
-        confidence = round((completeness * 0.5 + corroboration * 0.5) * 100, 1)
+        confidence = round((0.25*D + 0.30*E + 0.20*S + 0.15*G_s + 0.10*X) * 100, 1)
         
-        # Assign Priority Band
+        # 2-Axis Priority Matrix
         if risk >= 75 and confidence >= 70:
-            priority = "Critical (High Evidence)"
-        elif risk >= 75:
-            priority = "Critical (Limited Evidence)"
-        elif risk >= 50:
-            priority = "Review"
+            priority = "Priority Lead"
+        elif risk >= 75 and confidence < 70:
+            priority = "Investigate Further"
+        elif risk < 75 and confidence >= 70:
+            priority = "Low Concern"
         else:
-            priority = "Low"
+            priority = "Insufficient Evidence"
+            
+        # Plain-English Translation
+        feat = exp.get("top_feature", "")
+        if "fan_out" in feat:
+            narrative = "Unusually high fund dispersion. Funds were distributed across significantly more outputs than expected."
+        elif "reuse" in feat:
+            narrative = "Repeated network observation. Multiple transactions originated from the same endpoint."
+        else:
+            narrative = f"Activity anomaly detected in {feat}."
             
         records.append({
-            "txid": row["txid"],
-            "risk_score": round(risk, 1),
-            "confidence_score": confidence,
+            "txid": row["txid"], 
+            "risk_score": round(risk, 1), 
+            "confidence_score": confidence, 
             "priority_band": priority,
-            "top_feature": exp["top_feature"],
-            "shap_explanation": f"Flagged primarily due to {exp['top_feature']}"
+            "top_feature": feat, 
+            "shap_explanation": narrative
         })
-        
     return pl.DataFrame(records)
