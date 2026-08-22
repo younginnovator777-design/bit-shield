@@ -1,0 +1,2 @@
+timestamp,src_ip,dst_ip,src_port,dst_port,txid,input_addresses,output_addresses,input_amounts,output_amounts,fee,script_type,geo_country,asn
+2026-03-01T10:00:00Z,192.168.1.1,10.0.0.1,8333,8333,tx001,addr_a,addr_b|addr_c,1.5,1.0|0.4,0.1,p2pkh,IN,AS1234

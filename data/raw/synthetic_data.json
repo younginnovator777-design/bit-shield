@@ -1,0 +1,757 @@
+[
+  {
+    "timestamp": "2026-03-01T10:00:00Z",
+    "src_ip": "192.168.1.1",
+    "dst_ip": "10.0.0.1",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_000",
+    "input_addresses": [
+      "addr_in_5"
+    ],
+    "output_addresses": [
+      "addr_out_4"
+    ],
+    "input_amounts": [
+      0.52
+    ],
+    "output_amounts": [
+      1.42
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:05:00Z",
+    "src_ip": "192.168.1.5",
+    "dst_ip": "10.0.0.1",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_001",
+    "input_addresses": [
+      "addr_in_10"
+    ],
+    "output_addresses": [
+      "addr_out_7"
+    ],
+    "input_amounts": [
+      0.16
+    ],
+    "output_amounts": [
+      0.26
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:10:00Z",
+    "src_ip": "192.168.1.2",
+    "dst_ip": "10.0.0.5",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_002",
+    "input_addresses": [
+      "addr_in_10"
+    ],
+    "output_addresses": [
+      "addr_out_1"
+    ],
+    "input_amounts": [
+      1.17
+    ],
+    "output_amounts": [
+      1.39
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:15:00Z",
+    "src_ip": "192.168.1.5",
+    "dst_ip": "10.0.0.4",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_003",
+    "input_addresses": [
+      "addr_in_4"
+    ],
+    "output_addresses": [
+      "addr_out_8"
+    ],
+    "input_amounts": [
+      1.22
+    ],
+    "output_amounts": [
+      1.56
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:20:00Z",
+    "src_ip": "192.168.1.1",
+    "dst_ip": "10.0.0.2",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_004",
+    "input_addresses": [
+      "addr_in_7"
+    ],
+    "output_addresses": [
+      "addr_out_6"
+    ],
+    "input_amounts": [
+      0.63
+    ],
+    "output_amounts": [
+      0.48
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:25:00Z",
+    "src_ip": "192.168.1.3",
+    "dst_ip": "10.0.0.1",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_005",
+    "input_addresses": [
+      "addr_in_2"
+    ],
+    "output_addresses": [
+      "addr_out_7"
+    ],
+    "input_amounts": [
+      0.28
+    ],
+    "output_amounts": [
+      1.62
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:30:00Z",
+    "src_ip": "192.168.1.5",
+    "dst_ip": "10.0.0.3",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_006",
+    "input_addresses": [
+      "addr_in_1"
+    ],
+    "output_addresses": [
+      "addr_out_8"
+    ],
+    "input_amounts": [
+      1.12
+    ],
+    "output_amounts": [
+      1.85
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:35:00Z",
+    "src_ip": "192.168.1.4",
+    "dst_ip": "10.0.0.1",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_007",
+    "input_addresses": [
+      "addr_in_9"
+    ],
+    "output_addresses": [
+      "addr_out_5"
+    ],
+    "input_amounts": [
+      1.68
+    ],
+    "output_amounts": [
+      1.21
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:40:00Z",
+    "src_ip": "192.168.1.3",
+    "dst_ip": "10.0.0.5",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_008",
+    "input_addresses": [
+      "addr_in_4"
+    ],
+    "output_addresses": [
+      "addr_out_2"
+    ],
+    "input_amounts": [
+      0.19
+    ],
+    "output_amounts": [
+      0.5
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:45:00Z",
+    "src_ip": "192.168.1.3",
+    "dst_ip": "10.0.0.1",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_009",
+    "input_addresses": [
+      "addr_in_4"
+    ],
+    "output_addresses": [
+      "addr_out_2"
+    ],
+    "input_amounts": [
+      0.82
+    ],
+    "output_amounts": [
+      0.91
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:50:00Z",
+    "src_ip": "192.168.1.3",
+    "dst_ip": "10.0.0.2",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_010",
+    "input_addresses": [
+      "addr_in_6"
+    ],
+    "output_addresses": [
+      "addr_out_6"
+    ],
+    "input_amounts": [
+      0.5
+    ],
+    "output_amounts": [
+      0.57
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:55:00Z",
+    "src_ip": "192.168.1.1",
+    "dst_ip": "10.0.0.5",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_011",
+    "input_addresses": [
+      "addr_in_3"
+    ],
+    "output_addresses": [
+      "addr_out_9"
+    ],
+    "input_amounts": [
+      1.49
+    ],
+    "output_amounts": [
+      0.39
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T11:00:00Z",
+    "src_ip": "192.168.1.4",
+    "dst_ip": "10.0.0.3",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_012",
+    "input_addresses": [
+      "addr_in_9"
+    ],
+    "output_addresses": [
+      "addr_out_4"
+    ],
+    "input_amounts": [
+      1.4
+    ],
+    "output_amounts": [
+      1.62
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T11:05:00Z",
+    "src_ip": "192.168.1.1",
+    "dst_ip": "10.0.0.2",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_013",
+    "input_addresses": [
+      "addr_in_1"
+    ],
+    "output_addresses": [
+      "addr_out_6"
+    ],
+    "input_amounts": [
+      0.86
+    ],
+    "output_amounts": [
+      0.21
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T11:10:00Z",
+    "src_ip": "192.168.1.5",
+    "dst_ip": "10.0.0.3",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_014",
+    "input_addresses": [
+      "addr_in_4"
+    ],
+    "output_addresses": [
+      "addr_out_8"
+    ],
+    "input_amounts": [
+      0.85
+    ],
+    "output_amounts": [
+      1.75
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T11:15:00Z",
+    "src_ip": "192.168.1.4",
+    "dst_ip": "10.0.0.2",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_015",
+    "input_addresses": [
+      "addr_in_5"
+    ],
+    "output_addresses": [
+      "addr_out_3"
+    ],
+    "input_amounts": [
+      0.57
+    ],
+    "output_amounts": [
+      1.11
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T11:20:00Z",
+    "src_ip": "192.168.1.3",
+    "dst_ip": "10.0.0.5",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_016",
+    "input_addresses": [
+      "addr_in_7"
+    ],
+    "output_addresses": [
+      "addr_out_10"
+    ],
+    "input_amounts": [
+      0.86
+    ],
+    "output_amounts": [
+      0.49
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T11:25:00Z",
+    "src_ip": "192.168.1.2",
+    "dst_ip": "10.0.0.5",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_017",
+    "input_addresses": [
+      "addr_in_8"
+    ],
+    "output_addresses": [
+      "addr_out_2"
+    ],
+    "input_amounts": [
+      1.54
+    ],
+    "output_amounts": [
+      1.65
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T11:30:00Z",
+    "src_ip": "192.168.1.2",
+    "dst_ip": "10.0.0.2",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_018",
+    "input_addresses": [
+      "addr_in_7"
+    ],
+    "output_addresses": [
+      "addr_out_10"
+    ],
+    "input_amounts": [
+      0.22
+    ],
+    "output_amounts": [
+      0.78
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T11:35:00Z",
+    "src_ip": "192.168.1.4",
+    "dst_ip": "10.0.0.5",
+    "src_port": 8333,
+    "dst_port": 8333,
+    "txid": "tx_norm_019",
+    "input_addresses": [
+      "addr_in_5"
+    ],
+    "output_addresses": [
+      "addr_out_9"
+    ],
+    "input_amounts": [
+      1.74
+    ],
+    "output_amounts": [
+      0.11
+    ],
+    "fee": 0.01,
+    "script_type": "p2pkh",
+    "geo_country": "IN",
+    "asn": "AS1234",
+    "is_anomaly": 0
+  },
+  {
+    "timestamp": "2026-03-01T10:00:00Z",
+    "src_ip": "10.99.99.99",
+    "dst_ip": "10.0.0.1",
+    "src_port": 9050,
+    "dst_port": 8333,
+    "txid": "tx_burst_000",
+    "input_addresses": [
+      "addr_fan_0",
+      "addr_fan_1",
+      "addr_fan_2",
+      "addr_fan_3",
+      "addr_fan_4"
+    ],
+    "output_addresses": [
+      "addr_out_burst_0",
+      "addr_out_burst_1",
+      "addr_out_burst_2",
+      "addr_out_burst_3",
+      "addr_out_burst_4",
+      "addr_out_burst_5",
+      "addr_out_burst_6",
+      "addr_out_burst_7",
+      "addr_out_burst_8",
+      "addr_out_burst_9"
+    ],
+    "input_amounts": [
+      50.0,
+      50.0,
+      50.0,
+      50.0,
+      50.0
+    ],
+    "output_amounts": [
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0
+    ],
+    "fee": 1.0,
+    "script_type": "p2sh",
+    "geo_country": "UNKNOWN",
+    "asn": "AS9999",
+    "is_anomaly": 1
+  },
+  {
+    "timestamp": "2026-03-01T10:00:02Z",
+    "src_ip": "10.99.99.99",
+    "dst_ip": "10.0.0.1",
+    "src_port": 9050,
+    "dst_port": 8333,
+    "txid": "tx_burst_001",
+    "input_addresses": [
+      "addr_fan_0",
+      "addr_fan_1",
+      "addr_fan_2",
+      "addr_fan_3",
+      "addr_fan_4"
+    ],
+    "output_addresses": [
+      "addr_out_burst_0",
+      "addr_out_burst_1",
+      "addr_out_burst_2",
+      "addr_out_burst_3",
+      "addr_out_burst_4",
+      "addr_out_burst_5",
+      "addr_out_burst_6",
+      "addr_out_burst_7",
+      "addr_out_burst_8",
+      "addr_out_burst_9"
+    ],
+    "input_amounts": [
+      50.0,
+      50.0,
+      50.0,
+      50.0,
+      50.0
+    ],
+    "output_amounts": [
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0
+    ],
+    "fee": 1.0,
+    "script_type": "p2sh",
+    "geo_country": "UNKNOWN",
+    "asn": "AS9999",
+    "is_anomaly": 1
+  },
+  {
+    "timestamp": "2026-03-01T10:00:04Z",
+    "src_ip": "10.99.99.99",
+    "dst_ip": "10.0.0.1",
+    "src_port": 9050,
+    "dst_port": 8333,
+    "txid": "tx_burst_002",
+    "input_addresses": [
+      "addr_fan_0",
+      "addr_fan_1",
+      "addr_fan_2",
+      "addr_fan_3",
+      "addr_fan_4"
+    ],
+    "output_addresses": [
+      "addr_out_burst_0",
+      "addr_out_burst_1",
+      "addr_out_burst_2",
+      "addr_out_burst_3",
+      "addr_out_burst_4",
+      "addr_out_burst_5",
+      "addr_out_burst_6",
+      "addr_out_burst_7",
+      "addr_out_burst_8",
+      "addr_out_burst_9"
+    ],
+    "input_amounts": [
+      50.0,
+      50.0,
+      50.0,
+      50.0,
+      50.0
+    ],
+    "output_amounts": [
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0
+    ],
+    "fee": 1.0,
+    "script_type": "p2sh",
+    "geo_country": "UNKNOWN",
+    "asn": "AS9999",
+    "is_anomaly": 1
+  },
+  {
+    "timestamp": "2026-03-01T10:00:06Z",
+    "src_ip": "10.99.99.99",
+    "dst_ip": "10.0.0.1",
+    "src_port": 9050,
+    "dst_port": 8333,
+    "txid": "tx_burst_003",
+    "input_addresses": [
+      "addr_fan_0",
+      "addr_fan_1",
+      "addr_fan_2",
+      "addr_fan_3",
+      "addr_fan_4"
+    ],
+    "output_addresses": [
+      "addr_out_burst_0",
+      "addr_out_burst_1",
+      "addr_out_burst_2",
+      "addr_out_burst_3",
+      "addr_out_burst_4",
+      "addr_out_burst_5",
+      "addr_out_burst_6",
+      "addr_out_burst_7",
+      "addr_out_burst_8",
+      "addr_out_burst_9"
+    ],
+    "input_amounts": [
+      50.0,
+      50.0,
+      50.0,
+      50.0,
+      50.0
+    ],
+    "output_amounts": [
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0
+    ],
+    "fee": 1.0,
+    "script_type": "p2sh",
+    "geo_country": "UNKNOWN",
+    "asn": "AS9999",
+    "is_anomaly": 1
+  },
+  {
+    "timestamp": "2026-03-01T10:00:08Z",
+    "src_ip": "10.99.99.99",
+    "dst_ip": "10.0.0.1",
+    "src_port": 9050,
+    "dst_port": 8333,
+    "txid": "tx_burst_004",
+    "input_addresses": [
+      "addr_fan_0",
+      "addr_fan_1",
+      "addr_fan_2",
+      "addr_fan_3",
+      "addr_fan_4"
+    ],
+    "output_addresses": [
+      "addr_out_burst_0",
+      "addr_out_burst_1",
+      "addr_out_burst_2",
+      "addr_out_burst_3",
+      "addr_out_burst_4",
+      "addr_out_burst_5",
+      "addr_out_burst_6",
+      "addr_out_burst_7",
+      "addr_out_burst_8",
+      "addr_out_burst_9"
+    ],
+    "input_amounts": [
+      50.0,
+      50.0,
+      50.0,
+      50.0,
+      50.0
+    ],
+    "output_amounts": [
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0,
+      24.0
+    ],
+    "fee": 1.0,
+    "script_type": "p2sh",
+    "geo_country": "UNKNOWN",
+    "asn": "AS9999",
+    "is_anomaly": 1
+  }
+]

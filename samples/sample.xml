@@ -1,0 +1,28 @@
+<transactions>
+  <transaction>
+    <timestamp>2026-03-01T10:00:00Z</timestamp>
+    <src_ip>192.168.1.1</src_ip>
+    <dst_ip>10.0.0.1</dst_ip>
+    <src_port>8333</src_port>
+    <dst_port>8333</dst_port>
+    <txid>tx001</txid>
+    <input_addresses>
+      <address>addr_a</address>
+    </input_addresses>
+    <output_addresses>
+      <address>addr_b</address>
+      <address>addr_c</address>
+    </output_addresses>
+    <input_amounts>
+      <amount>1.5</amount>
+    </input_amounts>
+    <output_amounts>
+      <amount>1.0</amount>
+      <amount>0.4</amount>
+    </output_amounts>
+    <fee>0.1</fee>
+    <script_type>p2pkh</script_type>
+    <geo_country>IN</geo_country>
+    <asn>AS1234</asn>
+  </transaction>
+</transactions>

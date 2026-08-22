@@ -1,0 +1,12 @@
+polars
+lxml
+scikit-learn
+shap
+networkx
+streamlit
+plotly
+pyvis
+geoip2
+joblib
+faker
+pytest
