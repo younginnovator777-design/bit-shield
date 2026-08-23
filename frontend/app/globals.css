@@ -1,20 +1,158 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
   body {
-    background-color: #020617;
-    color: #f8fafc;
+    background-color: #07090e;
+    color: #f1f5f9;
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background-image: 
-      radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 60%),
-      linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 32px 32px, 32px 32px;
+    overflow-x: hidden;
+    /* Landing page background */
+    background-image:
+      radial-gradient(circle at 50% 0%, rgba(30, 41, 59, 0.35) 0%, transparent 70%),
+      radial-gradient(circle at 10% 30%, rgba(15, 23, 42, 0.5) 0%, transparent 50%),
+      radial-gradient(circle at 90% 70%, rgba(15, 23, 42, 0.5) 0%, transparent 50%),
+      linear-gradient(to right, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
     background-attachment: fixed;
   }
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #020617; }
-::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #334155; }
+/* ── Workspace body override ───────────────────────────────────────────── */
+body.workspace {
+  background-color: #0b0d11;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-attachment: fixed;
+}
+
+/* ── Glass utility classes ─────────────────────────────────────────────── */
+.glass-panel {
+  background: rgba(13, 17, 26, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-subtle {
+  background: rgba(10, 13, 20, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* workspace-specific card surface */
+.ws-card {
+  background: rgba(22, 26, 35, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+}
+
+.ws-card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ws-card-hover:hover {
+  background: rgba(30, 35, 48, 0.75);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.glass-card-interactive {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-interactive:hover {
+  background: rgba(18, 24, 38, 0.85);
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ── Drawer slide-in animation ─────────────────────────────────────────── */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.drawer-slide-in {
+  animation: slide-in-right 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Ticker / live-feed scroll ─────────────────────────────────────────── */
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-ticker {
+  animation: ticker-scroll 38s linear infinite;
+  white-space: nowrap;
+  display: flex;
+}
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* ── Fade-in utility ───────────────────────────────────────────────────── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Risk bar progress fill ────────────────────────────────────────────── */
+@keyframes bar-fill {
+  from { width: 0%; }
+}
+.animate-bar-fill { animation: bar-fill 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* ── Pulse dot ─────────────────────────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1);   }
+  50%       { opacity: 0.5; transform: scale(0.9); }
+}
+.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+/* ── Radar sweep ───────────────────────────────────────────────────────── */
+@keyframes radar-sweep {
+  0%   { transform: translateY(-100%); opacity: 0;    }
+  50%  { opacity: 0.15; }
+  100% { transform: translateY(1000%); opacity: 0;    }
+}
+.animate-radar { animation: radar-sweep 8s linear infinite; }
+
+/* ── Node pulse for graph highlighted nodes ────────────────────────────── */
+@keyframes node-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);  }
+}
+.node-pulse { animation: node-pulse 2s ease infinite; }
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar              { width: 7px; height: 7px; }
+::-webkit-scrollbar-track        { background: #07090e; }
+::-webkit-scrollbar-thumb        { background: #1e293b; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+::-webkit-scrollbar-thumb:hover  { background: #334155; }
+
+/* ── Tab underline indicator ───────────────────────────────────────────── */
+.tab-active {
+  border-bottom: 2px solid #f1f5f9;
+  color: #f1f5f9;
+}
+
+/* ── Drag-and-drop zone ────────────────────────────────────────────────── */
+.dz-active {
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
