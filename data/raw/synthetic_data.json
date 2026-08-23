@@ -1,517 +1,449 @@
 [
   {
-    "timestamp": "2026-03-01T10:00:00Z",
-    "src_ip": "192.168.1.1",
-    "dst_ip": "10.0.0.1",
-    "src_port": 8333,
-    "dst_port": 8333,
     "txid": "tx_norm_000",
+    "timestamp": "2026-08-21T20:45:24.486882+00:00",
     "input_addresses": [
-      "addr_in_5"
-    ],
-    "output_addresses": [
-      "addr_out_4"
+      "addr_in_0"
     ],
     "input_amounts": [
-      0.52
+      1.7443
+    ],
+    "output_addresses": [
+      "addr_out_0"
     ],
     "output_amounts": [
-      1.42
+      1.7438
     ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
+    "fee": 0.00048,
+    "src_ip": "192.168.25.73",
+    "geo_country": "CA",
+    "asn": 13335,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.93
   },
   {
-    "timestamp": "2026-03-01T10:05:00Z",
-    "src_ip": "192.168.1.5",
-    "dst_ip": "10.0.0.1",
-    "src_port": 8333,
-    "dst_port": 8333,
     "txid": "tx_norm_001",
+    "timestamp": "2026-08-21T20:52:54.486882+00:00",
     "input_addresses": [
-      "addr_in_10"
-    ],
-    "output_addresses": [
-      "addr_out_7"
+      "addr_in_1"
     ],
     "input_amounts": [
-      0.16
-    ],
-    "output_amounts": [
-      0.26
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T10:10:00Z",
-    "src_ip": "192.168.1.2",
-    "dst_ip": "10.0.0.5",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_002",
-    "input_addresses": [
-      "addr_in_10"
+      4.8638
     ],
     "output_addresses": [
       "addr_out_1"
     ],
-    "input_amounts": [
-      1.17
-    ],
     "output_amounts": [
-      1.39
+      4.8635
     ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
+    "fee": 0.00029,
+    "src_ip": "192.168.49.153",
+    "geo_country": "US",
+    "asn": 16509,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.92
   },
   {
-    "timestamp": "2026-03-01T10:15:00Z",
-    "src_ip": "192.168.1.5",
-    "dst_ip": "10.0.0.4",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_003",
-    "input_addresses": [
-      "addr_in_4"
-    ],
-    "output_addresses": [
-      "addr_out_8"
-    ],
-    "input_amounts": [
-      1.22
-    ],
-    "output_amounts": [
-      1.56
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T10:20:00Z",
-    "src_ip": "192.168.1.1",
-    "dst_ip": "10.0.0.2",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_004",
-    "input_addresses": [
-      "addr_in_7"
-    ],
-    "output_addresses": [
-      "addr_out_6"
-    ],
-    "input_amounts": [
-      0.63
-    ],
-    "output_amounts": [
-      0.48
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T10:25:00Z",
-    "src_ip": "192.168.1.3",
-    "dst_ip": "10.0.0.1",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_005",
+    "txid": "tx_norm_002",
+    "timestamp": "2026-08-21T21:00:24.486882+00:00",
     "input_addresses": [
       "addr_in_2"
     ],
-    "output_addresses": [
-      "addr_out_7"
-    ],
     "input_amounts": [
-      0.28
-    ],
-    "output_amounts": [
-      1.62
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T10:30:00Z",
-    "src_ip": "192.168.1.5",
-    "dst_ip": "10.0.0.3",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_006",
-    "input_addresses": [
-      "addr_in_1"
-    ],
-    "output_addresses": [
-      "addr_out_8"
-    ],
-    "input_amounts": [
-      1.12
-    ],
-    "output_amounts": [
-      1.85
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T10:35:00Z",
-    "src_ip": "192.168.1.4",
-    "dst_ip": "10.0.0.1",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_007",
-    "input_addresses": [
-      "addr_in_9"
-    ],
-    "output_addresses": [
-      "addr_out_5"
-    ],
-    "input_amounts": [
-      1.68
-    ],
-    "output_amounts": [
-      1.21
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T10:40:00Z",
-    "src_ip": "192.168.1.3",
-    "dst_ip": "10.0.0.5",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_008",
-    "input_addresses": [
-      "addr_in_4"
+      4.7288
     ],
     "output_addresses": [
       "addr_out_2"
     ],
-    "input_amounts": [
-      0.19
-    ],
     "output_amounts": [
-      0.5
+      4.7287
     ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
+    "fee": 0.00015,
+    "src_ip": "192.168.25.146",
+    "geo_country": "GB",
+    "asn": 13335,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.76
   },
   {
-    "timestamp": "2026-03-01T10:45:00Z",
-    "src_ip": "192.168.1.3",
-    "dst_ip": "10.0.0.1",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_009",
-    "input_addresses": [
-      "addr_in_4"
-    ],
-    "output_addresses": [
-      "addr_out_2"
-    ],
-    "input_amounts": [
-      0.82
-    ],
-    "output_amounts": [
-      0.91
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T10:50:00Z",
-    "src_ip": "192.168.1.3",
-    "dst_ip": "10.0.0.2",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_010",
-    "input_addresses": [
-      "addr_in_6"
-    ],
-    "output_addresses": [
-      "addr_out_6"
-    ],
-    "input_amounts": [
-      0.5
-    ],
-    "output_amounts": [
-      0.57
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T10:55:00Z",
-    "src_ip": "192.168.1.1",
-    "dst_ip": "10.0.0.5",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_011",
+    "txid": "tx_norm_003",
+    "timestamp": "2026-08-21T21:07:54.486882+00:00",
     "input_addresses": [
       "addr_in_3"
     ],
-    "output_addresses": [
-      "addr_out_9"
-    ],
     "input_amounts": [
-      1.49
-    ],
-    "output_amounts": [
-      0.39
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T11:00:00Z",
-    "src_ip": "192.168.1.4",
-    "dst_ip": "10.0.0.3",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_012",
-    "input_addresses": [
-      "addr_in_9"
-    ],
-    "output_addresses": [
-      "addr_out_4"
-    ],
-    "input_amounts": [
-      1.4
-    ],
-    "output_amounts": [
-      1.62
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T11:05:00Z",
-    "src_ip": "192.168.1.1",
-    "dst_ip": "10.0.0.2",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_013",
-    "input_addresses": [
-      "addr_in_1"
-    ],
-    "output_addresses": [
-      "addr_out_6"
-    ],
-    "input_amounts": [
-      0.86
-    ],
-    "output_amounts": [
-      0.21
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T11:10:00Z",
-    "src_ip": "192.168.1.5",
-    "dst_ip": "10.0.0.3",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_014",
-    "input_addresses": [
-      "addr_in_4"
-    ],
-    "output_addresses": [
-      "addr_out_8"
-    ],
-    "input_amounts": [
-      0.85
-    ],
-    "output_amounts": [
-      1.75
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T11:15:00Z",
-    "src_ip": "192.168.1.4",
-    "dst_ip": "10.0.0.2",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_015",
-    "input_addresses": [
-      "addr_in_5"
+      2.9829
     ],
     "output_addresses": [
       "addr_out_3"
     ],
-    "input_amounts": [
-      0.57
-    ],
     "output_amounts": [
-      1.11
+      2.9827
     ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
+    "fee": 0.00017,
+    "src_ip": "192.168.48.75",
+    "geo_country": "JP",
+    "asn": 7922,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.95
   },
   {
-    "timestamp": "2026-03-01T11:20:00Z",
-    "src_ip": "192.168.1.3",
-    "dst_ip": "10.0.0.5",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_016",
+    "txid": "tx_norm_004",
+    "timestamp": "2026-08-21T21:15:24.486882+00:00",
+    "input_addresses": [
+      "addr_in_4"
+    ],
+    "input_amounts": [
+      4.7116
+    ],
+    "output_addresses": [
+      "addr_out_4"
+    ],
+    "output_amounts": [
+      4.7114
+    ],
+    "fee": 0.00024,
+    "src_ip": "192.168.2.58",
+    "geo_country": "US",
+    "asn": 7922,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.76
+  },
+  {
+    "txid": "tx_norm_005",
+    "timestamp": "2026-08-21T21:22:54.486882+00:00",
+    "input_addresses": [
+      "addr_in_5"
+    ],
+    "input_amounts": [
+      4.7733
+    ],
+    "output_addresses": [
+      "addr_out_5"
+    ],
+    "output_amounts": [
+      4.7728
+    ],
+    "fee": 0.00047,
+    "src_ip": "192.168.37.124",
+    "geo_country": "GB",
+    "asn": 7922,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.75
+  },
+  {
+    "txid": "tx_norm_006",
+    "timestamp": "2026-08-21T21:30:24.486882+00:00",
+    "input_addresses": [
+      "addr_in_6"
+    ],
+    "input_amounts": [
+      1.5059
+    ],
+    "output_addresses": [
+      "addr_out_6"
+    ],
+    "output_amounts": [
+      1.5056
+    ],
+    "fee": 0.00028,
+    "src_ip": "192.168.16.91",
+    "geo_country": "US",
+    "asn": 13335,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.89
+  },
+  {
+    "txid": "tx_norm_007",
+    "timestamp": "2026-08-21T21:37:54.486882+00:00",
     "input_addresses": [
       "addr_in_7"
     ],
-    "output_addresses": [
-      "addr_out_10"
-    ],
     "input_amounts": [
-      0.86
+      4.0502
+    ],
+    "output_addresses": [
+      "addr_out_7"
     ],
     "output_amounts": [
-      0.49
+      4.0499
     ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
+    "fee": 0.00033,
+    "src_ip": "192.168.21.102",
+    "geo_country": "US",
+    "asn": 13335,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.82
   },
   {
-    "timestamp": "2026-03-01T11:25:00Z",
-    "src_ip": "192.168.1.2",
-    "dst_ip": "10.0.0.5",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_017",
+    "txid": "tx_norm_008",
+    "timestamp": "2026-08-21T21:45:24.486882+00:00",
     "input_addresses": [
       "addr_in_8"
     ],
-    "output_addresses": [
-      "addr_out_2"
-    ],
     "input_amounts": [
-      1.54
-    ],
-    "output_amounts": [
-      1.65
-    ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
-  },
-  {
-    "timestamp": "2026-03-01T11:30:00Z",
-    "src_ip": "192.168.1.2",
-    "dst_ip": "10.0.0.2",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_018",
-    "input_addresses": [
-      "addr_in_7"
+      4.8613
     ],
     "output_addresses": [
-      "addr_out_10"
-    ],
-    "input_amounts": [
-      0.22
+      "addr_out_8"
     ],
     "output_amounts": [
-      0.78
+      4.8611
     ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
+    "fee": 0.00022,
+    "src_ip": "192.168.17.169",
+    "geo_country": "US",
+    "asn": 16509,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.75
   },
   {
-    "timestamp": "2026-03-01T11:35:00Z",
-    "src_ip": "192.168.1.4",
-    "dst_ip": "10.0.0.5",
-    "src_port": 8333,
-    "dst_port": 8333,
-    "txid": "tx_norm_019",
+    "txid": "tx_norm_009",
+    "timestamp": "2026-08-21T21:52:54.486882+00:00",
     "input_addresses": [
-      "addr_in_5"
+      "addr_in_9"
+    ],
+    "input_amounts": [
+      2.7953
     ],
     "output_addresses": [
       "addr_out_9"
     ],
-    "input_amounts": [
-      1.74
-    ],
     "output_amounts": [
-      0.11
+      2.795
     ],
-    "fee": 0.01,
-    "script_type": "p2pkh",
-    "geo_country": "IN",
-    "asn": "AS1234",
-    "is_anomaly": 0
+    "fee": 0.00029,
+    "src_ip": "192.168.39.201",
+    "geo_country": "GB",
+    "asn": 8075,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.8
   },
   {
-    "timestamp": "2026-03-01T10:00:00Z",
-    "src_ip": "10.99.99.99",
-    "dst_ip": "10.0.0.1",
-    "src_port": 9050,
-    "dst_port": 8333,
+    "txid": "tx_norm_010",
+    "timestamp": "2026-08-21T22:00:24.486882+00:00",
+    "input_addresses": [
+      "addr_in_10"
+    ],
+    "input_amounts": [
+      0.5592
+    ],
+    "output_addresses": [
+      "addr_out_10"
+    ],
+    "output_amounts": [
+      0.5591
+    ],
+    "fee": 0.00014,
+    "src_ip": "192.168.2.111",
+    "geo_country": "FR",
+    "asn": 8075,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.78
+  },
+  {
+    "txid": "tx_norm_011",
+    "timestamp": "2026-08-21T22:07:54.486882+00:00",
+    "input_addresses": [
+      "addr_in_11"
+    ],
+    "input_amounts": [
+      0.9556
+    ],
+    "output_addresses": [
+      "addr_out_11"
+    ],
+    "output_amounts": [
+      0.9555
+    ],
+    "fee": 0.00012,
+    "src_ip": "192.168.21.11",
+    "geo_country": "GB",
+    "asn": 7922,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.8
+  },
+  {
+    "txid": "tx_norm_012",
+    "timestamp": "2026-08-21T22:15:24.486882+00:00",
+    "input_addresses": [
+      "addr_in_12"
+    ],
+    "input_amounts": [
+      4.0564
+    ],
+    "output_addresses": [
+      "addr_out_12"
+    ],
+    "output_amounts": [
+      4.0562
+    ],
+    "fee": 0.00017,
+    "src_ip": "192.168.3.144",
+    "geo_country": "DE",
+    "asn": 15169,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.97
+  },
+  {
+    "txid": "tx_norm_013",
+    "timestamp": "2026-08-21T22:22:54.486882+00:00",
+    "input_addresses": [
+      "addr_in_13"
+    ],
+    "input_amounts": [
+      1.9429
+    ],
+    "output_addresses": [
+      "addr_out_13"
+    ],
+    "output_amounts": [
+      1.9428
+    ],
+    "fee": 9e-05,
+    "src_ip": "192.168.3.185",
+    "geo_country": "DE",
+    "asn": 15169,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.86
+  },
+  {
+    "txid": "tx_norm_014",
+    "timestamp": "2026-08-21T22:30:24.486882+00:00",
+    "input_addresses": [
+      "addr_in_14"
+    ],
+    "input_amounts": [
+      2.2633
+    ],
+    "output_addresses": [
+      "addr_out_14"
+    ],
+    "output_amounts": [
+      2.2628
+    ],
+    "fee": 0.00048,
+    "src_ip": "192.168.29.172",
+    "geo_country": "GB",
+    "asn": 16509,
+    "vpn_flag": 0,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.9
+  },
+  {
+    "txid": "tx_mule_chain_000",
+    "timestamp": "2026-08-21T22:08:44.486882+00:00",
+    "input_addresses": [
+      "mule_wallet_0"
+    ],
+    "input_amounts": [
+      12.5
+    ],
+    "output_addresses": [
+      "mule_wallet_1"
+    ],
+    "output_amounts": [
+      12.48
+    ],
+    "fee": 0.02,
+    "src_ip": "10.0.42.1",
+    "geo_country": "RU",
+    "asn": 4134,
+    "vpn_flag": 1,
+    "vulnerability_flag": 1,
+    "completeness_score": 0.65
+  },
+  {
+    "txid": "tx_mule_chain_001",
+    "timestamp": "2026-08-21T22:09:29.486882+00:00",
+    "input_addresses": [
+      "mule_wallet_1"
+    ],
+    "input_amounts": [
+      12.5
+    ],
+    "output_addresses": [
+      "mule_wallet_2"
+    ],
+    "output_amounts": [
+      12.48
+    ],
+    "fee": 0.02,
+    "src_ip": "10.0.42.1",
+    "geo_country": "KP",
+    "asn": 4134,
+    "vpn_flag": 1,
+    "vulnerability_flag": 1,
+    "completeness_score": 0.65
+  },
+  {
+    "txid": "tx_mule_chain_002",
+    "timestamp": "2026-08-21T22:10:14.486882+00:00",
+    "input_addresses": [
+      "mule_wallet_2"
+    ],
+    "input_amounts": [
+      12.5
+    ],
+    "output_addresses": [
+      "mule_wallet_3"
+    ],
+    "output_amounts": [
+      12.48
+    ],
+    "fee": 0.02,
+    "src_ip": "10.0.42.2",
+    "geo_country": "RU",
+    "asn": 4134,
+    "vpn_flag": 1,
+    "vulnerability_flag": 1,
+    "completeness_score": 0.65
+  },
+  {
+    "txid": "tx_mule_chain_003",
+    "timestamp": "2026-08-21T22:10:59.486882+00:00",
+    "input_addresses": [
+      "mule_wallet_3"
+    ],
+    "input_amounts": [
+      12.5
+    ],
+    "output_addresses": [
+      "mule_wallet_4"
+    ],
+    "output_amounts": [
+      12.48
+    ],
+    "fee": 0.02,
+    "src_ip": "10.0.42.3",
+    "geo_country": "KP",
+    "asn": 4134,
+    "vpn_flag": 1,
+    "vulnerability_flag": 1,
+    "completeness_score": 0.65
+  },
+  {
     "txid": "tx_burst_000",
+    "timestamp": "2026-08-22T00:05:24.486882+00:00",
     "input_addresses": [
-      "addr_fan_0",
-      "addr_fan_1",
-      "addr_fan_2",
-      "addr_fan_3",
-      "addr_fan_4"
+      "main_vault_01"
+    ],
+    "input_amounts": [
+      5.1
     ],
     "output_addresses": [
       "addr_out_burst_0",
@@ -525,233 +457,24 @@
       "addr_out_burst_8",
       "addr_out_burst_9"
     ],
-    "input_amounts": [
-      50.0,
-      50.0,
-      50.0,
-      50.0,
-      50.0
-    ],
     "output_amounts": [
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
     ],
-    "fee": 1.0,
-    "script_type": "p2sh",
-    "geo_country": "UNKNOWN",
-    "asn": "AS9999",
-    "is_anomaly": 1
-  },
-  {
-    "timestamp": "2026-03-01T10:00:02Z",
-    "src_ip": "10.99.99.99",
-    "dst_ip": "10.0.0.1",
-    "src_port": 9050,
-    "dst_port": 8333,
-    "txid": "tx_burst_001",
-    "input_addresses": [
-      "addr_fan_0",
-      "addr_fan_1",
-      "addr_fan_2",
-      "addr_fan_3",
-      "addr_fan_4"
-    ],
-    "output_addresses": [
-      "addr_out_burst_0",
-      "addr_out_burst_1",
-      "addr_out_burst_2",
-      "addr_out_burst_3",
-      "addr_out_burst_4",
-      "addr_out_burst_5",
-      "addr_out_burst_6",
-      "addr_out_burst_7",
-      "addr_out_burst_8",
-      "addr_out_burst_9"
-    ],
-    "input_amounts": [
-      50.0,
-      50.0,
-      50.0,
-      50.0,
-      50.0
-    ],
-    "output_amounts": [
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0
-    ],
-    "fee": 1.0,
-    "script_type": "p2sh",
-    "geo_country": "UNKNOWN",
-    "asn": "AS9999",
-    "is_anomaly": 1
-  },
-  {
-    "timestamp": "2026-03-01T10:00:04Z",
-    "src_ip": "10.99.99.99",
-    "dst_ip": "10.0.0.1",
-    "src_port": 9050,
-    "dst_port": 8333,
-    "txid": "tx_burst_002",
-    "input_addresses": [
-      "addr_fan_0",
-      "addr_fan_1",
-      "addr_fan_2",
-      "addr_fan_3",
-      "addr_fan_4"
-    ],
-    "output_addresses": [
-      "addr_out_burst_0",
-      "addr_out_burst_1",
-      "addr_out_burst_2",
-      "addr_out_burst_3",
-      "addr_out_burst_4",
-      "addr_out_burst_5",
-      "addr_out_burst_6",
-      "addr_out_burst_7",
-      "addr_out_burst_8",
-      "addr_out_burst_9"
-    ],
-    "input_amounts": [
-      50.0,
-      50.0,
-      50.0,
-      50.0,
-      50.0
-    ],
-    "output_amounts": [
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0
-    ],
-    "fee": 1.0,
-    "script_type": "p2sh",
-    "geo_country": "UNKNOWN",
-    "asn": "AS9999",
-    "is_anomaly": 1
-  },
-  {
-    "timestamp": "2026-03-01T10:00:06Z",
-    "src_ip": "10.99.99.99",
-    "dst_ip": "10.0.0.1",
-    "src_port": 9050,
-    "dst_port": 8333,
-    "txid": "tx_burst_003",
-    "input_addresses": [
-      "addr_fan_0",
-      "addr_fan_1",
-      "addr_fan_2",
-      "addr_fan_3",
-      "addr_fan_4"
-    ],
-    "output_addresses": [
-      "addr_out_burst_0",
-      "addr_out_burst_1",
-      "addr_out_burst_2",
-      "addr_out_burst_3",
-      "addr_out_burst_4",
-      "addr_out_burst_5",
-      "addr_out_burst_6",
-      "addr_out_burst_7",
-      "addr_out_burst_8",
-      "addr_out_burst_9"
-    ],
-    "input_amounts": [
-      50.0,
-      50.0,
-      50.0,
-      50.0,
-      50.0
-    ],
-    "output_amounts": [
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0
-    ],
-    "fee": 1.0,
-    "script_type": "p2sh",
-    "geo_country": "UNKNOWN",
-    "asn": "AS9999",
-    "is_anomaly": 1
-  },
-  {
-    "timestamp": "2026-03-01T10:00:08Z",
-    "src_ip": "10.99.99.99",
-    "dst_ip": "10.0.0.1",
-    "src_port": 9050,
-    "dst_port": 8333,
-    "txid": "tx_burst_004",
-    "input_addresses": [
-      "addr_fan_0",
-      "addr_fan_1",
-      "addr_fan_2",
-      "addr_fan_3",
-      "addr_fan_4"
-    ],
-    "output_addresses": [
-      "addr_out_burst_0",
-      "addr_out_burst_1",
-      "addr_out_burst_2",
-      "addr_out_burst_3",
-      "addr_out_burst_4",
-      "addr_out_burst_5",
-      "addr_out_burst_6",
-      "addr_out_burst_7",
-      "addr_out_burst_8",
-      "addr_out_burst_9"
-    ],
-    "input_amounts": [
-      50.0,
-      50.0,
-      50.0,
-      50.0,
-      50.0
-    ],
-    "output_amounts": [
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0,
-      24.0
-    ],
-    "fee": 1.0,
-    "script_type": "p2sh",
-    "geo_country": "UNKNOWN",
-    "asn": "AS9999",
-    "is_anomaly": 1
+    "fee": 0.1,
+    "src_ip": "172.16.0.99",
+    "geo_country": "CY",
+    "asn": 9009,
+    "vpn_flag": 1,
+    "vulnerability_flag": 0,
+    "completeness_score": 0.85
   }
 ]
