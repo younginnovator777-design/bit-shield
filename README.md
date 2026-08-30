@@ -1,6 +1,6 @@
-# BIT-SHIELD | Local Air-Gapped AML & Forensics Platform
+# BIT-SHIELD | AI-Powered Monitoring & Analysis of Bitcoin Transaction Traffic
 
-BIT-SHIELD is an enterprise-grade, privacy-centric, offline Anti-Money Laundering (AML) and cryptocurrency forensics platform designed for air-gapped defense and intelligence environments. The platform executes entirely on local hardware (127.0.0.1), ensuring zero data egress and absolute data sovereignty.
+BIT-SHIELD is an offline Bitcoin traffic intelligence and forensics platform designed for investigating anomalous digital asset flows. The platform ingests bulk transaction metadata, correlates peer network telemetry with blockchain ledger data, and generates explainable investigative leads using unsupervised machine learning and SHAP attribution.
 
 ---
 

@@ -14,7 +14,7 @@ app.add_middleware(
 
 @app.get("/api/health")
 def health():
-    return {"status": "online", "mode": "air-gapped"}
+    return {"status": "online", "mode": "offline-isolated"}
 
 @app.get("/api/overview")
 def overview():

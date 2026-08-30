@@ -115,7 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <StatusRow icon={Wifi}  label="NETWORK"         value="DISCONNECTED" color="text-slate-300" />
             <StatusRow icon={Cpu}   label="AI ENGINE"       value="LOCAL"       color="text-slate-300" />
             <div className="mt-2 pt-2 border-t border-white/[0.04] text-[9px] font-mono text-slate-600 px-1">
-              PS 26146 • iso-forest-v2.4.1
+              BIT-SHIELD • offline-intel
             </div>
           </div>
 
@@ -129,7 +129,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Breadcrumb pathname={pathname} />
             <div className="flex items-center space-x-2 text-[10px] font-mono text-slate-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>AIR-GAPPED WORKSTATION</span>
+              <span>OFFLINE TRAFFIC INTELLIGENCE WORKSTATION</span>
             </div>
           </div>
           {/* Page content */}

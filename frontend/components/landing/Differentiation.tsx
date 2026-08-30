@@ -5,13 +5,13 @@ import { Shield, Layers, HelpCircle, HardDrive, Cpu, CheckCircle } from "lucide-
 export default function Differentiation() {
   const pillars = [
     {
-      title: "OFFLINE BY DESIGN",
-      subtitle: "Zero Cloud Telemetry",
-      description: "Sensitive analytical workloads and high-security forensics remain completely local. Ingestion, graph generation, unsupervised ML inference, and visualization operate within air-gapped environments without dependency on external intelligence APIs or cloud runtime endpoints.",
+      title: "OFFLINE INTELLIGENCE CORE",
+      subtitle: "Local Evidentiary Isolation",
+      description: "Sensitive analytical workloads and high-security forensics execute completely locally. Bulk metadata ingestion, graph generation, unsupervised ML inference, and visualization operate on-premises without dependency on external intelligence APIs or cloud runtime endpoints.",
       icon: HardDrive,
       points: [
-        "No telemetry or analytical data leaves the secure workstation",
-        "Operates on air-gapped forensic laptops or on-prem Linux servers",
+        "No telemetry or analytical records leave the local workstation",
+        "Operates on isolated forensic workstations or on-premises Linux servers",
         "Deterministic local models guarantee reproducible evidentiary trails",
       ],
     },
@@ -53,7 +53,7 @@ export default function Differentiation() {
           <span className="text-slate-300">not the spreadsheet.</span>
         </h2>
         <p className="text-slate-400 text-sm leading-relaxed font-sans">
-          Most transaction tools produce static tables with millions of rows or rely on external cloud scoring models that cannot be deployed in classified air-gapped centers. BIT-SHIELD was engineered from the ground up for active national cyber-investigators.
+          Most transaction tools produce static tables with millions of rows or rely on external cloud scoring models that cannot be deployed in sensitive forensic environments. BIT-SHIELD was engineered from the ground up for active cyber-investigators.
         </p>
       </div>
 

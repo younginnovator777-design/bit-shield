@@ -160,25 +160,40 @@ export default function LeadsExplorer() {
               </p>
             </div>
 
-            {/* SHAP preview toggle */}
-            {expanded === lead.txid && (
-              <div className="px-4 pb-3">
-                <div className="text-[9px] font-mono text-slate-500 uppercase mb-2">SHAP Attribution</div>
-                <ShapBar values={lead.shap_values} />
-              </div>
-            )}
+            {/* AI Risk Breakdown toggle */}
+            {(() => {
+              const hasShap = Boolean(lead.shap_values && Array.isArray(lead.shap_values) && lead.shap_values.length > 0);
+              return (
+                <>
+                  {expanded === lead.txid && hasShap && (
+                    <div className="px-4 pb-3">
+                      <div className="text-[9px] font-mono text-slate-500 uppercase mb-2 font-bold tracking-wider">
+                        AI RISK BREAKDOWN
+                      </div>
+                      <ShapBar values={lead.shap_values} />
+                    </div>
+                  )}
 
-            {/* Footer actions */}
-            <div className="px-4 pb-4 flex gap-2">
-              <button onClick={() => setExpanded(expanded === lead.txid ? null : lead.txid)}
-                className="flex-1 text-[10px] font-mono font-bold uppercase border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700 py-2 rounded-lg transition">
-                {expanded === lead.txid ? "Hide SHAP" : "Show SHAP"}
-              </button>
-              <Link href={`/investigation/${lead.txid}`}
-                className="flex-1 flex items-center justify-center gap-1 text-[10px] font-mono font-bold uppercase bg-white/[0.07] hover:bg-white/[0.12] text-slate-200 border border-white/[0.12] hover:border-white/[0.22] py-2 rounded-lg transition-all">
-                INVESTIGATE <ChevronRight className="w-3 h-3" />
-              </Link>
-            </div>
+                  {/* Footer actions */}
+                  <div className="px-4 pb-4 flex gap-2">
+                    {hasShap && (
+                      <button
+                        onClick={() => setExpanded(expanded === lead.txid ? null : lead.txid)}
+                        className="flex-1 text-[10px] font-mono font-bold uppercase border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700 py-2 rounded-lg transition"
+                      >
+                        {expanded === lead.txid ? "HIDE EXPLANATION" : "EXPLAIN RISK"}
+                      </button>
+                    )}
+                    <Link
+                      href={`/investigation/${lead.txid}`}
+                      className={`${hasShap ? "flex-1" : "w-full"} flex items-center justify-center gap-1 text-[10px] font-mono font-bold uppercase bg-white/[0.07] hover:bg-white/[0.12] text-slate-200 border border-white/[0.12] hover:border-white/[0.22] py-2 rounded-lg transition-all`}
+                    >
+                      INVESTIGATE <ChevronRight className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         ))}
 

@@ -37,7 +37,7 @@ export default function OfflineArchitecture() {
     {
       id: "LAYER 04",
       name: "AI ANOMALY ENGINE",
-      tech: "Scikit-Learn Isolation Forest (Air-Gapped)",
+      tech: "Scikit-Learn Isolation Forest (Local Deterministic)",
       icon: Cpu,
       input: "Engineered feature matrix (velocity, fan-out, graph degree, ASN rarity)",
       processing: "Builds 100 orthogonal isolation trees locally to isolate anomalous transaction structures in high-dimensional feature space.",
@@ -70,46 +70,46 @@ export default function OfflineArchitecture() {
       <div className="max-w-3xl mb-16">
         <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-slate-400 mb-3">
           <Lock className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Air-Gapped Infrastructure</span>
+          <span>Offline Execution Architecture</span>
         </div>
         <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-6 leading-tight">
           Designed for environments where <br />
           <span className="text-slate-300">data cannot leave the room.</span>
         </h2>
         <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-sans mb-4">
-          BIT-SHIELD is designed as an offline, Linux-deployable analytical workstation.
+          BIT-SHIELD is engineered as a self-contained, Linux-deployable intelligence platform.
         </p>
         <p className="text-slate-400 text-sm leading-relaxed">
-          Data ingestion, feature engineering, anomaly detection, graph clustering, and explainability all operate locally — without relying on cloud inference, remote LLM endpoints, or live external telemetry.
+          Data ingestion, feature engineering, anomaly detection, graph clustering, and explainability all execute locally — without relying on cloud inference, remote LLM endpoints, or external telemetry leaks.
         </p>
       </div>
 
-      {/* Air-Gapped System Status Strip */}
+      {/* Offline System Status Strip */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-16 font-mono text-xs">
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+        <div className="bg-slate-950 p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between">
           <span className="text-[10px] text-slate-400 uppercase">SYSTEM STATE</span>
           <div className="text-emerald-400 font-bold flex items-center gap-1.5 mt-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>AIR-GAPPED</span>
+            <span>OFFLINE CORE</span>
           </div>
         </div>
 
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+        <div className="bg-slate-950 p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between">
           <span className="text-[10px] text-slate-400 uppercase">EXTERNAL NETWORK</span>
           <div className="text-slate-300 font-bold mt-2">DISCONNECTED</div>
         </div>
 
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+        <div className="bg-slate-950 p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between">
           <span className="text-[10px] text-slate-400 uppercase">AI ENGINE</span>
           <div className="text-white font-bold mt-2">LOCAL ISOLATION</div>
         </div>
 
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+        <div className="bg-slate-950 p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between">
           <span className="text-[10px] text-slate-400 uppercase">STORAGE ENGINE</span>
-          <div className="text-white font-bold mt-2">LOCAL PARQUET/DB</div>
+          <div className="text-white font-bold mt-2">LOCAL DUCKDB/PARQUET</div>
         </div>
 
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between col-span-2 md:col-span-1">
+        <div className="bg-slate-950 p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between col-span-2 md:col-span-1">
           <span className="text-[10px] text-slate-400 uppercase">TELEMETRY LEAKAGE</span>
           <div className="text-emerald-400 font-bold mt-2">ZERO (0.00%)</div>
         </div>

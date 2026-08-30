@@ -11,16 +11,26 @@
     color: #f1f5f9;
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     overflow-x: hidden;
-    /* Landing page background */
+    /* Luxury Dark Mode Ambient Gradients & Micro-Grid */
     background-image:
-      radial-gradient(circle at 50% 0%, rgba(30, 41, 59, 0.35) 0%, transparent 70%),
-      radial-gradient(circle at 10% 30%, rgba(15, 23, 42, 0.5) 0%, transparent 50%),
-      radial-gradient(circle at 90% 70%, rgba(15, 23, 42, 0.5) 0%, transparent 50%),
-      linear-gradient(to right, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37, 99, 235, 0.15), transparent),
+      radial-gradient(circle at 10% 25%, rgba(30, 41, 59, 0.35) 0%, transparent 45%),
+      radial-gradient(circle at 90% 65%, rgba(15, 23, 42, 0.45) 0%, transparent 45%),
+      linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
     background-attachment: fixed;
   }
+}
+
+/* ── Precision Cyber Grid Overlay ─────────────────────────────────────── */
+.cyber-grid-overlay {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse 65% 55% at 50% 30%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 30%, black 20%, transparent 80%);
 }
 
 /* ── Workspace body override ───────────────────────────────────────────── */
@@ -33,29 +43,30 @@ body.workspace {
   background-attachment: fixed;
 }
 
-/* ── Glass utility classes ─────────────────────────────────────────────── */
+/* ── Glass utility classes (High-End Enterprise Polish) ────────────────── */
 .glass-panel {
-  background: rgba(13, 17, 26, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  background: rgba(13, 17, 26, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
 .glass-panel-subtle {
-  background: rgba(10, 13, 20, 0.5);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(10, 13, 20, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.045);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
 }
 
 /* workspace-specific card surface */
 .ws-card {
-  background: rgba(22, 26, 35, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(20, 24, 34, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: 0 8px 30px -6px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   border-radius: 14px;
 }
 

@@ -52,7 +52,7 @@ export default function InvestigatorExperience() {
       detail: "BIT-SHIELD provides clean evidentiary dossiers for enforcement triage without algorithmic overreach. The investigator tags the entity, exports the correlated PCAP/ledger timeline, and flags related downstream addresses for ongoing local monitoring.",
       uiSnippet: {
         label: "ANALYST ACTION PROTOCOL",
-        values: ["Priority 1 Case Assigned to Analyst", "Export Court-Admissible Dossier (JSON/PDF)", "Air-Gapped Local Rule Added for Linked UTXOs"],
+        values: ["Priority 1 Case Assigned to Analyst", "Export Court-Admissible Dossier (JSON/PDF)", "Local Forensic Rule Enacted for Linked UTXOs"],
       },
     },
   ];

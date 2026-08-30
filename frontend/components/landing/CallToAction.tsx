@@ -30,7 +30,7 @@ export default function CallToAction() {
               href="/command-center"
               className="w-full sm:w-auto inline-flex items-center justify-center space-x-3 bg-white hover:bg-slate-100 text-slate-950 font-bold px-8 py-4 rounded-xl text-sm font-mono tracking-wide shadow-[0_0_35px_rgba(255,255,255,0.2)] transition-all transform hover:-translate-y-0.5 active:translate-y-0"
             >
-              <span>ENTER COMMAND CENTER</span>
+              <span>LAUNCH COMMAND CENTER</span>
               <ArrowRight className="w-4 h-4 text-slate-950" />
             </Link>
 
@@ -44,16 +44,16 @@ export default function CallToAction() {
           </div>
 
           {/* System Specification Tagline Footer */}
-          <div className="pt-8 mt-8 border-t border-slate-800/80 flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-slate-400">
-            <span className="text-white font-semibold">PS 26146</span>
+          <div className="pt-8 mt-8 border-t border-white/[0.08] flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-slate-400">
+            <span className="text-white font-semibold">BIT-SHIELD</span>
             <span className="text-slate-600">•</span>
-            <span className="text-emerald-400">OFFLINE</span>
+            <span className="text-emerald-400">OFFLINE ANALYSIS</span>
             <span className="text-slate-600">•</span>
-            <span>AI-POWERED</span>
+            <span>NETWORK & CHAIN CORRELATION</span>
             <span className="text-slate-600">•</span>
-            <span>EXPLAINABLE</span>
+            <span>SHAP EXPLAINABILITY</span>
             <span className="text-slate-600">•</span>
-            <span>AIR-GAPPED COMPLIANT</span>
+            <span>ANOMALY DETECTION</span>
           </div>
 
         </div>
@@ -61,7 +61,7 @@ export default function CallToAction() {
       </div>
 
       <div className="mt-12 text-center text-xs font-mono text-slate-500">
-        BIT-SHIELD • National Technical Research Org PS 26146 Offline Transaction Intelligence Platform
+        BIT-SHIELD • AI-Powered Monitoring & Analysis of Bitcoin Transaction Traffic
       </div>
 
     </footer>

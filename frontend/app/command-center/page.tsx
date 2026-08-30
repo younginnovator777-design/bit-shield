@@ -14,70 +14,272 @@ import ActivityTicker from "@/components/workspace/ActivityTicker";
 function RiskConfidenceScatter({
   leads, selected, onSelect,
 }: { leads: Lead[]; selected: string | null; onSelect: (band: string | null) => void }) {
-  const W = 280; const H = 220; const PAD = 28;
+  const W = 380; 
+  const H = 290; 
+  const PAD_LEFT = 46; 
+  const PAD_RIGHT = 26;
+  const PAD_TOP = 26; 
+  const PAD_BOTTOM = 38;
+
+  const PLOT_W = W - PAD_LEFT - PAD_RIGHT; // 308
+  const PLOT_H = H - PAD_TOP - PAD_BOTTOM; // 226
+  const HALF_W = PLOT_W / 2;               // 154
+  const HALF_H = PLOT_H / 2;               // 113
+  const MID_X = PAD_LEFT + HALF_W;         // 200
+  const MID_Y = PAD_TOP + HALF_H;          // 139
 
   const quadrants = [
-    { x: PAD, y: PAD,        w: (W-PAD*2)/2, h: (H-PAD*2)/2, label: "Investigate Further", color: "rgba(217,119,6,0.12)",  border: "rgba(217,119,6,0.4)" },
-    { x: PAD+(W-PAD*2)/2, y: PAD,       w: (W-PAD*2)/2, h: (H-PAD*2)/2, label: "Priority Lead",        color: "rgba(220,38,38,0.12)", border: "rgba(220,38,38,0.4)" },
-    { x: PAD, y: PAD+(H-PAD*2)/2,       w: (W-PAD*2)/2, h: (H-PAD*2)/2, label: "Insufficient Evidence", color: "rgba(71,85,105,0.1)",  border: "rgba(71,85,105,0.2)" },
-    { x: PAD+(W-PAD*2)/2, y: PAD+(H-PAD*2)/2, w: (W-PAD*2)/2, h: (H-PAD*2)/2, label: "Low Concern", color: "rgba(5,150,105,0.1)", border: "rgba(5,150,105,0.3)" },
+    {
+      id: "investigate",
+      x: PAD_LEFT,
+      y: PAD_TOP,
+      w: HALF_W,
+      h: HALF_H,
+      label: "Investigate Further",
+      tag: "INVESTIGATE FURTHER",
+      tagX: PAD_LEFT + 8,
+      tagY: PAD_TOP + 14,
+      bg: "rgba(245, 158, 11, 0.07)",
+      border: "rgba(245, 158, 11, 0.35)",
+      hoverBg: "rgba(245, 158, 11, 0.16)",
+      tagColor: "#f59e0b",
+    },
+    {
+      id: "priority",
+      x: MID_X,
+      y: PAD_TOP,
+      w: HALF_W,
+      h: HALF_H,
+      label: "Priority Lead",
+      tag: "PRIORITY LEAD",
+      tagX: W - PAD_RIGHT - 8,
+      tagY: PAD_TOP + 14,
+      tagAnchor: "end",
+      bg: "rgba(239, 68, 68, 0.08)",
+      border: "rgba(239, 68, 68, 0.35)",
+      hoverBg: "rgba(239, 68, 68, 0.18)",
+      tagColor: "#ef4444",
+    },
+    {
+      id: "insufficient",
+      x: PAD_LEFT,
+      y: MID_Y,
+      w: HALF_W,
+      h: HALF_H,
+      label: "Insufficient Evidence",
+      tag: "INSUFFICIENT EVIDENCE",
+      tagX: PAD_LEFT + 8,
+      tagY: H - PAD_BOTTOM - 8,
+      bg: "rgba(100, 116, 139, 0.05)",
+      border: "rgba(100, 116, 139, 0.25)",
+      hoverBg: "rgba(100, 116, 139, 0.12)",
+      tagColor: "#94a3b8",
+    },
+    {
+      id: "low_concern",
+      x: MID_X,
+      y: MID_Y,
+      w: HALF_W,
+      h: HALF_H,
+      label: "Low Concern",
+      tag: "LOW CONCERN",
+      tagX: W - PAD_RIGHT - 8,
+      tagY: H - PAD_BOTTOM - 8,
+      tagAnchor: "end",
+      bg: "rgba(16, 185, 129, 0.06)",
+      border: "rgba(16, 185, 129, 0.3)",
+      hoverBg: "rgba(16, 185, 129, 0.14)",
+      tagColor: "#10b981",
+    },
   ];
 
-  const plotX = (confidence: number) => PAD + (confidence / 100) * (W - PAD * 2);
-  const plotY = (risk: number)       => H - PAD - (risk / 100) * (H - PAD * 2);
+  const plotX = (confidence: number) => PAD_LEFT + (Math.max(0, Math.min(100, confidence)) / 100) * PLOT_W;
+  const plotY = (risk: number)       => (H - PAD_BOTTOM) - (Math.max(0, Math.min(100, risk)) / 100) * PLOT_H;
 
   const dotColor: Record<Lead["priority_band"], string> = {
-    "Priority Lead":         "#dc2626",
-    "Investigate Further":   "#d97706",
+    "Priority Lead":         "#ef4444",
+    "Investigate Further":   "#f59e0b",
     "Low Concern":           "#10b981",
-    "Insufficient Evidence": "#64748b",
+    "Insufficient Evidence": "#94a3b8",
+  };
+
+  const dotGlow: Record<Lead["priority_band"], string> = {
+    "Priority Lead":         "rgba(239, 68, 68, 0.4)",
+    "Investigate Further":   "rgba(245, 158, 11, 0.4)",
+    "Low Concern":           "rgba(16, 185, 129, 0.4)",
+    "Insufficient Evidence": "rgba(148, 163, 184, 0.3)",
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <svg width={W} height={H} className="overflow-visible">
-        {/* Grid lines */}
-        <line x1={PAD+(W-PAD*2)/2} y1={PAD} x2={PAD+(W-PAD*2)/2} y2={H-PAD} stroke="rgba(255,255,255,0.08)" strokeDasharray="4,4" />
-        <line x1={PAD} y1={PAD+(H-PAD*2)/2} x2={W-PAD} y2={PAD+(H-PAD*2)/2} stroke="rgba(255,255,255,0.08)" strokeDasharray="4,4" />
+    <div className="flex-1 w-full flex flex-col items-center justify-center overflow-hidden">
+      <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          className="w-full h-full max-h-[380px] overflow-visible select-none"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <filter id="glow-scatter" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-        {/* Quadrant fills — clickable */}
-        {quadrants.map((q) => (
-          <rect key={q.label} x={q.x} y={q.y} width={q.w} height={q.h}
-            fill={selected === q.label ? q.color : "transparent"}
-            stroke={q.border} strokeWidth={selected === q.label ? 1 : 0.5}
-            rx="4" className="cursor-pointer transition-all duration-200"
-            onClick={() => onSelect(selected === q.label ? null : q.label)}
+          {/* Outer Boundary Box */}
+          <rect
+            x={PAD_LEFT}
+            y={PAD_TOP}
+            width={PLOT_W}
+            height={PLOT_H}
+            fill="#080a10"
+            stroke="rgba(255,255,255,0.08)"
+            strokeWidth="1"
+            rx="6"
           />
-        ))}
 
-        {/* Axis labels */}
-        <text x={W/2} y={H-4} textAnchor="middle" fontSize="8" fill="#64748b" fontFamily="monospace">CONFIDENCE →</text>
-        <text x={8} y={H/2} textAnchor="middle" fontSize="8" fill="#64748b" fontFamily="monospace"
-          transform={`rotate(-90, 8, ${H/2})`}>RISK ↑</text>
+          {/* Quadrant Backdrops — Clickable */}
+          {quadrants.map((q) => {
+            const isSelected = selected === q.label;
+            return (
+              <g key={q.id} className="cursor-pointer" onClick={() => onSelect(isSelected ? null : q.label)}>
+                <rect
+                  x={q.x}
+                  y={q.y}
+                  width={q.w}
+                  height={q.h}
+                  fill={isSelected ? q.hoverBg : q.bg}
+                  stroke={isSelected ? q.tagColor : "transparent"}
+                  strokeWidth={isSelected ? "1.5" : "0"}
+                  className="transition-all duration-200 hover:opacity-90"
+                />
+                <text
+                  x={q.tagX}
+                  y={q.tagY}
+                  textAnchor={(q.tagAnchor as any) ?? "start"}
+                  fontSize="7"
+                  fontWeight="600"
+                  fontFamily="monospace"
+                  fill={q.tagColor}
+                  opacity={isSelected ? "1" : "0.75"}
+                  letterSpacing="0.03em"
+                >
+                  {q.tag}
+                </text>
+              </g>
+            );
+          })}
 
-        {/* Data points */}
-        {leads.map((lead) => (
-          <g key={lead.txid}>
-            <circle
-              cx={plotX(lead.confidence_score)}
-              cy={plotY(lead.risk_score)}
-              r={6}
-              fill={dotColor[lead.priority_band]}
-              opacity={0.85}
-              stroke="rgba(255,255,255,0.15)"
-              strokeWidth={1}
-              className="cursor-pointer"
-            >
-              <title>{`${lead.txid}: Risk ${lead.risk_score}, Conf ${lead.confidence_score}%`}</title>
-            </circle>
-          </g>
-        ))}
-      </svg>
+          {/* Midpoint Dividing Gridlines */}
+          <line
+            x1={MID_X}
+            y1={PAD_TOP}
+            x2={MID_X}
+            y2={H - PAD_BOTTOM}
+            stroke="rgba(255,255,255,0.18)"
+            strokeDasharray="4,4"
+            strokeWidth="1"
+          />
+          <line
+            x1={PAD_LEFT}
+            y1={MID_Y}
+            x2={W - PAD_RIGHT}
+            y2={MID_Y}
+            stroke="rgba(255,255,255,0.18)"
+            strokeDasharray="4,4"
+            strokeWidth="1"
+          />
+
+          {/* Axis Tick Marks & Values */}
+          {/* X ticks */}
+          <text x={PAD_LEFT} y={H - PAD_BOTTOM + 12} textAnchor="middle" fontSize="7" fill="#64748b" fontFamily="monospace">0%</text>
+          <text x={MID_X} y={H - PAD_BOTTOM + 12} textAnchor="middle" fontSize="7" fill="#64748b" fontFamily="monospace">50%</text>
+          <text x={W - PAD_RIGHT} y={H - PAD_BOTTOM + 12} textAnchor="middle" fontSize="7" fill="#64748b" fontFamily="monospace">100%</text>
+
+          {/* Y ticks */}
+          <text x={PAD_LEFT - 6} y={H - PAD_BOTTOM} textAnchor="end" fontSize="7" fill="#64748b" fontFamily="monospace">0</text>
+          <text x={PAD_LEFT - 6} y={MID_Y + 3} textAnchor="end" fontSize="7" fill="#64748b" fontFamily="monospace">50</text>
+          <text x={PAD_LEFT - 6} y={PAD_TOP + 4} textAnchor="end" fontSize="7" fill="#64748b" fontFamily="monospace">100</text>
+
+          {/* Axis Labels */}
+          <text
+            x={MID_X}
+            y={H - 4}
+            textAnchor="middle"
+            fontSize="7.5"
+            fontWeight="bold"
+            fill="#94a3b8"
+            fontFamily="monospace"
+            letterSpacing="0.05em"
+          >
+            CONFIDENCE LEVEL (CORROBORATION) →
+          </text>
+          <text
+            x={12}
+            y={MID_Y}
+            textAnchor="middle"
+            fontSize="7.5"
+            fontWeight="bold"
+            fill="#94a3b8"
+            fontFamily="monospace"
+            letterSpacing="0.05em"
+            transform={`rotate(-90, 12, ${MID_Y})`}
+          >
+            ANOMALY RISK ↑
+          </text>
+
+          {/* Scatter Data Points with Glow */}
+          {leads.map((lead) => {
+            const cx = plotX(lead.confidence_score);
+            const cy = plotY(lead.risk_score);
+            const color = dotColor[lead.priority_band];
+            const isMatch = !selected || selected === lead.priority_band;
+
+            return (
+              <g key={lead.txid} className="cursor-pointer transition-transform duration-150">
+                {/* Glow ring */}
+                {isMatch && (
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={7}
+                    fill={dotGlow[lead.priority_band]}
+                    opacity={0.35}
+                  />
+                )}
+                {/* Core Dot */}
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  r={isMatch ? 5 : 3.5}
+                  fill={color}
+                  opacity={isMatch ? 0.95 : 0.25}
+                  stroke="#ffffff"
+                  strokeWidth={isMatch ? 1.5 : 0.5}
+                  className="transition-all duration-200"
+                >
+                  <title>{`${lead.txid} (${lead.priority_band})\nRisk: ${lead.risk_score} / 100\nConfidence: ${lead.confidence_score}%\nOutputs: ${lead.output_count} · Fan-out: ${lead.fan_out_ratio}×`}</title>
+                </circle>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* Filter indicator */}
       {selected && (
-        <div className="mt-2 text-[10px] font-mono text-slate-400 flex items-center gap-1.5">
-          <Filter className="w-2.5 h-2.5" />
-          Filtering: <span className="text-white font-semibold">{selected}</span>
-          <button onClick={() => onSelect(null)} className="ml-1 text-slate-500 hover:text-white transition">✕</button>
+        <div className="mt-2 text-[10px] font-mono text-slate-300 bg-slate-900/90 border border-white/10 px-3 py-1 rounded-lg flex items-center gap-2 shadow-sm">
+          <Filter className="w-3 h-3 text-amber-400" />
+          <span>Active Filter: <strong className="text-white">{selected}</strong></span>
+          <button
+            onClick={() => onSelect(null)}
+            className="ml-1 text-slate-400 hover:text-white transition px-1 rounded hover:bg-white/10"
+            title="Clear filter"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>
@@ -215,13 +417,13 @@ export default function CommandCenter() {
         </div>
 
         {/* Right: Risk × Confidence Matrix (1/3) */}
-        <div className="ws-card p-5 flex flex-col">
+        <div className="ws-card flex flex-col h-full min-h-[500px] w-full p-4 overflow-hidden">
           <SectionHeader icon={Activity} title="Risk × Confidence" subtitle="Click quadrant to filter" />
-          <div className="flex-1 flex flex-col items-center justify-center gap-4">
+          <div className="flex-1 w-full flex flex-col items-center justify-center overflow-hidden my-2">
             <RiskConfidenceScatter leads={leads} selected={scatter} onSelect={setScatter} />
           </div>
 
-          <div className="mt-auto pt-4 border-t border-slate-800/60 space-y-2 text-[10px] font-mono">
+          <div className="mt-auto pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-2 text-[10px] font-mono shrink-0">
             <LegendRow color="bg-red-600"    label="Priority Lead" />
             <LegendRow color="bg-amber-500"  label="Investigate Further" />
             <LegendRow color="bg-emerald-500" label="Low Concern" />

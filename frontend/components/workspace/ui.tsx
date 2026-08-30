@@ -43,8 +43,9 @@ export function RiskBar({ score }: { score: number }) {
 }
 
 // ── ShapBar ───────────────────────────────────────────────────────────
-export function ShapBar({ values }: { values: Lead["shap_values"] }) {
-  const max = Math.max(...values.map(v => Math.abs(v.value)));
+export function ShapBar({ values }: { values?: Lead["shap_values"] }) {
+  if (!values || !Array.isArray(values) || values.length === 0) return null;
+  const max = Math.max(...values.map(v => Math.abs(v.value))) || 1;
   return (
     <div className="space-y-2.5">
       {values.map((v, i) => {

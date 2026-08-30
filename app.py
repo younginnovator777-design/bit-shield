@@ -14,7 +14,7 @@ from src.scoring.fused_score import compute_fused_scores
 st.set_page_config(page_title="Bit-Shield Workstation", layout="wide", initial_sidebar_state="expanded")
 
 st.title("🛡️ Bit-Shield Transaction Monitoring")
-st.caption("NTRO PS 26146 - Blockchain Intelligence & Risk Workstation")
+st.caption("Enterprise Blockchain Intelligence & Forensic Risk Workstation")
 
 @st.cache_data
 def load_and_process():
