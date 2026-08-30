@@ -14,11 +14,11 @@ import ActivityTicker from "@/components/workspace/ActivityTicker";
 function RiskConfidenceScatter({
   leads, selected, onSelect,
 }: { leads: Lead[]; selected: string | null; onSelect: (band: string | null) => void }) {
-  const W = 380; 
-  const H = 290; 
-  const PAD_LEFT = 46; 
+  const W = 380;
+  const H = 290;
+  const PAD_LEFT = 46;
   const PAD_RIGHT = 26;
-  const PAD_TOP = 26; 
+  const PAD_TOP = 26;
   const PAD_BOTTOM = 38;
 
   const PLOT_W = W - PAD_LEFT - PAD_RIGHT; // 308
@@ -94,19 +94,19 @@ function RiskConfidenceScatter({
   ];
 
   const plotX = (confidence: number) => PAD_LEFT + (Math.max(0, Math.min(100, confidence)) / 100) * PLOT_W;
-  const plotY = (risk: number)       => (H - PAD_BOTTOM) - (Math.max(0, Math.min(100, risk)) / 100) * PLOT_H;
+  const plotY = (risk: number) => (H - PAD_BOTTOM) - (Math.max(0, Math.min(100, risk)) / 100) * PLOT_H;
 
   const dotColor: Record<Lead["priority_band"], string> = {
-    "Priority Lead":         "#ef4444",
-    "Investigate Further":   "#f59e0b",
-    "Low Concern":           "#10b981",
+    "Priority Lead": "#ef4444",
+    "Investigate Further": "#f59e0b",
+    "Low Concern": "#10b981",
     "Insufficient Evidence": "#94a3b8",
   };
 
   const dotGlow: Record<Lead["priority_band"], string> = {
-    "Priority Lead":         "rgba(239, 68, 68, 0.4)",
-    "Investigate Further":   "rgba(245, 158, 11, 0.4)",
-    "Low Concern":           "rgba(16, 185, 129, 0.4)",
+    "Priority Lead": "rgba(239, 68, 68, 0.4)",
+    "Investigate Further": "rgba(245, 158, 11, 0.4)",
+    "Low Concern": "rgba(16, 185, 129, 0.4)",
     "Insufficient Evidence": "rgba(148, 163, 184, 0.3)",
   };
 
@@ -289,19 +289,21 @@ function RiskConfidenceScatter({
 // ── Main Command Center ────────────────────────────────────────────────
 export default function CommandCenter() {
   const [overview, setOverview] = useState<typeof MOCK_OVERVIEW>(MOCK_OVERVIEW);
-  const [leads, setLeads]       = useState<Lead[]>(MOCK_LEADS);
-  const [scatter, setScatter]   = useState<string | null>(null);
+  const [leads, setLeads] = useState<Lead[]>(MOCK_LEADS);
+  const [scatter, setScatter] = useState<string | null>(null);
 
   useEffect(() => {
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
     // Try API; fall back to mock
-    fetch("http://127.0.0.1:8000/api/overview")
+    fetch(`${API_BASE}/api/overview`)
       .then(r => r.json()).then(setOverview).catch(() => setOverview(MOCK_OVERVIEW));
-    fetch("http://127.0.0.1:8000/api/alerts")
+    fetch(`${API_BASE}/api/alerts`)
       .then(r => r.json()).then(setLeads).catch(() => setLeads(MOCK_LEADS));
   }, []);
 
   const filtered = scatter ? leads.filter(l => l.priority_band === scatter) : leads;
-  const sorted   = [...filtered].sort((a, b) => b.risk_score - a.risk_score);
+  const sorted = [...filtered].sort((a, b) => b.risk_score - a.risk_score);
 
   return (
     <div className="space-y-5 animate-fade-in-up">
@@ -326,10 +328,10 @@ export default function CommandCenter() {
 
       {/* ── KPI Tiles ───────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatTile label="TX Processed"     value={overview.transactions_processed.toLocaleString()} sub="current session" />
-        <StatTile label="Leads Surfaced"   value={overview.total_leads}   sub="active queue" accent="text-amber-400" />
-        <StatTile label="High Priority"    value={overview.high_priority_leads} sub="escalate now" accent="text-red-400" />
-        <StatTile label="Avg Confidence"   value={`${overview.avg_confidence}%`} sub="evidence quality" accent="text-emerald-400" />
+        <StatTile label="TX Processed" value={overview.transactions_processed.toLocaleString()} sub="current session" />
+        <StatTile label="Leads Surfaced" value={overview.total_leads} sub="active queue" accent="text-amber-400" />
+        <StatTile label="High Priority" value={overview.high_priority_leads} sub="escalate now" accent="text-red-400" />
+        <StatTile label="Avg Confidence" value={`${overview.avg_confidence}%`} sub="evidence quality" accent="text-emerald-400" />
       </div>
 
       {/* ── Main 2-column row ────────────────────────────────────── */}
@@ -370,7 +372,7 @@ export default function CommandCenter() {
                   <tr key={lead.txid}
                     className="hover:bg-white/[0.03] transition-colors duration-150 group">
                     <td className="py-3 px-3 font-mono text-slate-300 text-[11px]">
-                      <span className="text-slate-400">{lead.txid.slice(0,6)}</span>
+                      <span className="text-slate-400">{lead.txid.slice(0, 6)}</span>
                       <span className="text-slate-500">{lead.txid.slice(6)}</span>
                     </td>
                     <td className="py-3 px-3">
@@ -424,10 +426,10 @@ export default function CommandCenter() {
           </div>
 
           <div className="mt-auto pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-2 text-[10px] font-mono shrink-0">
-            <LegendRow color="bg-red-600"    label="Priority Lead" />
-            <LegendRow color="bg-amber-500"  label="Investigate Further" />
+            <LegendRow color="bg-red-600" label="Priority Lead" />
+            <LegendRow color="bg-amber-500" label="Investigate Further" />
             <LegendRow color="bg-emerald-500" label="Low Concern" />
-            <LegendRow color="bg-slate-500"  label="Insufficient Evidence" />
+            <LegendRow color="bg-slate-500" label="Insufficient Evidence" />
           </div>
         </div>
 
