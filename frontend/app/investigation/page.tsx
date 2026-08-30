@@ -39,7 +39,7 @@ export default function GraphWorkspaceIndex() {
             <div className="flex gap-4 text-[11px] font-mono text-slate-400">
               <span className={lead.risk_score >= 80 ? "text-red-400 font-bold" : "text-amber-400"}>Risk {lead.risk_score}</span>
               <span>·</span>
-              <span>{lead.neighborhood_nodes.length} nodes</span>
+              <span>{lead.neighborhood_nodes?.length || 0} nodes</span>
               <span>·</span>
               <span className={lead.fan_out_ratio >= 8 ? "text-red-400" : ""}>{lead.fan_out_ratio}× fan-out</span>
             </div>

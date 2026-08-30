@@ -12,13 +12,14 @@ import { RiskBadge, ShapBar, GlassCard, SectionHeader, Tooltip } from "@/compone
 
 // ── Timeline Visualizer ─────────────────────────────────────────────────
 function TimelineView({ events }: { events: Lead["timeline_events"] }) {
-  const maxBtc = Math.max(...events.map(e => e.amount_btc ?? 0));
+  const safeEvents = events || [];
+  const maxBtc = safeEvents.length > 0 ? Math.max(...safeEvents.map(e => e.amount_btc ?? 0)) : 0;
   return (
     <div className="space-y-3">
       <div className="text-[9px] font-mono text-slate-500 uppercase tracking-wider">
         BURST TIMELINE — offsets in milliseconds
       </div>
-      {events.map((ev, i) => {
+      {safeEvents.map((ev, i) => {
         const barPct = maxBtc > 0 ? ((ev.amount_btc ?? 0) / maxBtc) * 100 : 0;
         const typeColor = ev.type === "input" ? "text-slate-300" : ev.type === "hop" ? "text-amber-400" : "text-red-400";
         const barColor  = ev.type === "input" ? "bg-slate-600" : ev.type === "hop" ? "bg-amber-600" : "bg-red-700";
@@ -663,7 +664,7 @@ useEffect(() => {
             <div className="ws-card p-5 flex flex-col">
               <SectionHeader icon={Info} title="Entity Provenance Index" subtitle="Correlated Network & Chain Nodes" />
               <div className="space-y-2 flex-1 overflow-y-auto max-h-[460px] pr-1">
-                {lead.neighborhood_nodes.map((n) => (
+                {(lead.neighborhood_nodes || []).map((n) => (
                   <div
                     key={n.id}
                     onClick={() => setSelectedGraphNode(n)}
@@ -728,8 +729,8 @@ useEffect(() => {
                   <InfoRow label="Anomaly Score" value={`${lead.risk_score} / 100`}
                     accent={lead.risk_score >= 80 ? "text-red-400" : "text-amber-400"} />
                   <InfoRow label="Evidence Confidence" value={`${lead.confidence_score}%`} />
-                  <InfoRow label="Graph Centrality" value={lead.graph_centrality.toFixed(2)} />
-                  <InfoRow label="Velocity Percentile" value={`${lead.velocity_percentile}th`} />
+                  <InfoRow label="Graph Centrality" value={(lead.graph_centrality || 0).toFixed(2)} />
+                  <InfoRow label="Velocity Percentile" value={`${lead.velocity_percentile || 0}th`} />
                 </div>
                 <div className="mt-3 p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-[11px] text-slate-300 leading-relaxed font-sans">
                   {lead.shap_explanation}
@@ -746,7 +747,7 @@ useEffect(() => {
               <SectionHeader icon={Compass} title="Mandated Investigative Actions"
                 subtitle="Human-in-the-loop triage protocol" />
               <div className="space-y-2.5">
-                {lead.investigator_actions.map((action, i) => (
+                {(lead.investigator_actions || []).map((action, i) => (
                   <div key={i} className="flex items-start gap-2.5 p-3 bg-slate-950/60 border border-slate-800/60 rounded-xl">
                     <span className="text-[10px] font-mono text-slate-500 shrink-0 mt-0.5 w-5">{String(i+1).padStart(2,"0")}</span>
                     <span className="text-[12px] text-slate-200 font-sans leading-snug">{action}</span>
