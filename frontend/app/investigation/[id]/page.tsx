@@ -482,15 +482,17 @@ export default function InvestigationWorkspace() {
   const [graphData, setGraphData] = useState<any>(null);
   const [selectedGraphNode, setSelectedGraphNode] = useState<any | null>(null);
 
-  useEffect(() => {
+useEffect(() => {
     if (!txid) return;
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
     const mock = MOCK_LEADS.find(l => l.txid === txid) ?? MOCK_LEADS[0];
-    fetch(`http://127.0.0.1:8000/api/alerts/${txid}`)
+    
+    fetch(`${API_BASE}/api/alerts/${txid}`)
       .then(r => r.json())
       .then(d => setLead({ ...mock, ...d }))
       .catch(() => setLead(mock));
 
-    fetch(`http://127.0.0.1:8000/api/graph/${txid}?hops=3`)
+    fetch(`${API_BASE}/api/graph/${txid}?hops=3`)
       .then(r => r.json())
       .then(setGraphData)
       .catch(() => setGraphData(null));

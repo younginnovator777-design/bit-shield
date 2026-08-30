@@ -101,9 +101,21 @@ function ExportModal({ caseData, onClose }: { caseData: typeof CASE_BINDER_DATA;
 }
 
 // ── Main Case Binder ────────────────────────────────────────────────────
+import { useEffect } from "react"; // ADD THIS IMPORT AT THE VERY TOP OF THE FILE IF IT IS MISSING
+
 export default function CaseBinder() {
   const [showExport, setShowExport] = useState(false);
-  const caseLeads = MOCK_LEADS.filter(l => CASE_BINDER_DATA.leads.includes(l.txid));
+  const [leads, setLeads] = useState<Lead[]>(MOCK_LEADS);
+
+  useEffect(() => {
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    fetch(`${API_BASE}/api/alerts`)
+      .then((r) => r.json())
+      .then(setLeads)
+      .catch(() => setLeads(MOCK_LEADS));
+  }, []);
+
+  const caseLeads = leads.filter(l => CASE_BINDER_DATA.leads.includes(l.txid));
 
   return (
     <div className="space-y-5 animate-fade-in-up">

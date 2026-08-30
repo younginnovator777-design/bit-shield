@@ -18,8 +18,9 @@ export default function LeadsExplorer() {
   const [filterBand, setFilter]   = useState<FilterBand>("All");
   const [expanded, setExpanded]   = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/alerts")
+useEffect(() => {
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    fetch(`${API_BASE}/api/alerts`)
       .then(r => r.json()).then(setLeads).catch(() => setLeads(MOCK_LEADS));
   }, []);
 

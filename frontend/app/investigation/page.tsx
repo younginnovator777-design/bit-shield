@@ -1,12 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Network, ChevronRight, Zap } from "lucide-react";
-import { MOCK_LEADS } from "@/components/workspace/MockData";
+import { MOCK_LEADS, type Lead } from "@/components/workspace/MockData";
 import { RiskBadge } from "@/components/workspace/ui";
 
 export default function GraphWorkspaceIndex() {
-  const sorted = [...MOCK_LEADS].sort((a, b) => b.risk_score - a.risk_score);
+  const [leads, setLeads] = useState<Lead[]>(MOCK_LEADS);
+
+  useEffect(() => {
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    fetch(`${API_BASE}/api/alerts`)
+      .then((r) => r.json())
+      .then(setLeads)
+      .catch(() => setLeads(MOCK_LEADS));
+  }, []);
+
+  const sorted = [...leads].sort((a, b) => b.risk_score - a.risk_score);
   return (
     <div className="space-y-5 animate-fade-in-up">
       <div>
