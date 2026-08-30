@@ -10,3 +10,7 @@ geoip2
 joblib
 faker
 pytest
+fastapi
+uvicorn
+httpx
+python-multipart
