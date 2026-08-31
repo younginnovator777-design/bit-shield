@@ -5,10 +5,85 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Clock, Network, Cpu, Compass, Shield, AlertTriangle,
-  GitCommit, ChevronRight, Info, HelpCircle, Download,
+  GitCommit, ChevronRight, Info, HelpCircle, Download, CheckCircle2,
 } from "lucide-react";
 import { MOCK_LEADS, type Lead } from "@/components/workspace/MockData";
 import { RiskBadge, ShapBar, GlassCard, SectionHeader, Tooltip } from "@/components/workspace/ui";
+
+// ── localStorage helpers ────────────────────────────────────────────────
+const LS_BINDER_KEY = "bit_shield_case_binder";
+
+function getBinderLeads(): Lead[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem(LS_BINDER_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function addLeadToBinder(lead: Lead): void {
+  const existing = getBinderLeads();
+  if (existing.some((l) => l.txid === lead.txid)) return; // deduplicate
+  localStorage.setItem(LS_BINDER_KEY, JSON.stringify([lead, ...existing]));
+}
+
+// ── Browser File Download Helper ────────────────────────────────────────
+export const downloadJSON = (filename: string, payload: any) => {
+  if (typeof window === "undefined") return;
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+// ── Export Dossier Helper ────────────────────────────────────────────────
+function handleExportDossier(lead: Lead): void {
+  const dossier = {
+    classification: "OFFICIAL — FOR AUTHORIZED USE ONLY",
+    generated_at: new Date().toISOString(),
+    txid: lead.txid,
+    anomaly_risk: lead.risk_score,
+    confidence_score: lead.confidence_score,
+    priority_band: lead.priority_band,
+    top_feature: lead.top_feature,
+    shap_explanation: lead.shap_explanation,
+    shap_breakdown: (lead.shap_values || []).map((s) => ({
+      feature: s.feature,
+      contribution: s.value,
+      direction: s.direction,
+    })),
+    temporal_burst_signature: (lead.timeline_events || []).map((e) => ({
+      offset_ms: e.offset_ms,
+      type: e.type,
+      label: e.label,
+      amount_btc: e.amount_btc,
+    })),
+    investigator_actions: lead.investigator_actions || [],
+    neighborhood_nodes: (lead.neighborhood_nodes || []).map((n) => ({
+      id: n.id,
+      type: (n.type || "unknown").toUpperCase(),
+      risk: n.risk ?? lead.risk_score,
+    })),
+    metadata: {
+      amount_btc: lead.amount_btc,
+      output_count: lead.output_count,
+      asn: lead.asn,
+      ip: lead.ip,
+      timestamp: lead.timestamp,
+      velocity_percentile: lead.velocity_percentile,
+      fan_out_ratio: lead.fan_out_ratio,
+      graph_centrality: lead.graph_centrality,
+    },
+  };
+
+  downloadJSON(`${lead.txid}_dossier.json`, dossier);
+}
 
 // ── Timeline Visualizer ─────────────────────────────────────────────────
 function TimelineView({ events }: { events: Lead["timeline_events"] }) {
@@ -82,8 +157,48 @@ function SmartNeighborhoodGraph({
       let rawEdges: any[] = [];
 
       if (graphData && graphData.nodes && graphData.nodes.length > 0) {
-        rawNodes = graphData.nodes;
-        rawEdges = graphData.edges || [];
+        // Normalize API graph nodes — enrich with risk, human-readable label, fullId, meta
+        rawNodes = (graphData.nodes as any[]).map((n) => {
+          const nodeType = (n.type || n.node_type || "wallet").toLowerCase();
+          const nodeRisk = n.risk ?? n.risk_score ?? lead.risk_score ?? 50;
+          const labelMap: Record<string, string> = {
+            transaction: `TX: ${(n.id || "").slice(0, 8)}…`,
+            tx:          `TX: ${(n.id || "").slice(0, 8)}…`,
+            wallet:      `Wallet: ${(n.id || "").slice(0, 8)}…`,
+            ip:          `IP: ${n.id}`,
+            endpoint:    `IP: ${n.id}`,
+            port:        `PORT: ${n.id}`,
+            asn:         `ASN: ${n.id}`,
+            exchange:    `Exchange: ${(n.id || "").slice(0, 8)}…`,
+            mixer:       `Mixer: ${(n.id || "").slice(0, 8)}…`,
+          };
+          const metaMap: Record<string, string> = {
+            transaction: "On-chain Transaction",
+            tx:          "On-chain Transaction",
+            wallet:      "Wallet Entity",
+            ip:          "Peer IP Endpoint",
+            endpoint:    "Peer IP Endpoint",
+            port:        "P2P Propagation Port",
+            asn:         "ASN Routing",
+            exchange:    "Exchange Hop",
+            mixer:       "Mixer / Coinjoin",
+          };
+          return {
+            id: n.id || n.label,
+            label: n.label || labelMap[nodeType] || `${nodeType.toUpperCase()}: ${n.id}`,
+            fullId: n.id,
+            type: nodeType,
+            risk: nodeRisk,
+            meta: metaMap[nodeType] || nodeType.toUpperCase(),
+          };
+        });
+        rawEdges = (graphData.edges as any[]).map((e) => ({
+          from: e.from || e.source,
+          to: e.to || e.target,
+          relation: e.relation || e.label || "OBSERVED_WITH",
+          anomalous: e.anomalous ?? false,
+          weight: e.weight ?? 1,
+        }));
       } else {
         // Build rich multi-layer correlation network from Lead
         const mainTx = {
@@ -262,11 +377,15 @@ function SmartNeighborhoodGraph({
       };
 
       const nodes = rawNodes.map((n) => {
-        const conf = getNodeConfig(n.type, n.risk);
+        const safeType = (n.type || n.node_type || "wallet").toLowerCase().trim();
+        const nodeRisk = n.risk ?? lead.risk_score ?? 50;
+        const conf = getNodeConfig(safeType, nodeRisk);
+        const typeDisplay = (n.type || n.node_type || "unknown").toUpperCase();
+        const riskDisplay = n.risk ?? lead.risk_score ?? "N/A";
         return {
           id: n.id,
           label: n.label || n.id,
-          title: `Entity: ${n.fullId || n.id}\nType: ${n.type.toUpperCase()}\nRisk Score: ${n.risk ?? 'N/A'}\n${n.meta || ''}`,
+          title: `Entity: ${n.fullId || n.id || "N/A"}\nType: ${typeDisplay}\nRisk Score: ${riskDisplay}\n${n.meta || ""}`,
           shape: "dot",
           borderWidth: 2,
           borderWidthSelected: 3.5,
@@ -454,12 +573,12 @@ function SmartNeighborhoodGraph({
         <div className="absolute bottom-3 left-3 right-3 z-20 p-2.5 bg-slate-900/95 border border-white/15 rounded-xl backdrop-blur-xl flex items-center justify-between text-xs font-mono shadow-2xl">
           <div className="flex items-center gap-3">
             <span className="px-2 py-0.5 rounded bg-white/10 text-[10px] font-bold uppercase text-slate-200">
-              {selectedNode.type}
+              {(selectedNode.type || "unknown").toUpperCase()}
             </span>
             <span className="text-white font-bold">{selectedNode.fullId || selectedNode.id}</span>
-            {selectedNode.risk !== undefined && (
-              <span className={`text-[11px] font-bold ${selectedNode.risk >= 70 ? "text-red-400" : "text-amber-400"}`}>
-                Risk: {selectedNode.risk}/100
+            {(selectedNode.risk !== undefined || lead.risk_score !== undefined) && (
+              <span className={`text-[11px] font-bold ${(selectedNode.risk ?? lead.risk_score) >= 70 ? "text-red-400" : "text-amber-400"}`}>
+                Risk: {selectedNode.risk ?? lead.risk_score}/100
               </span>
             )}
           </div>
@@ -482,18 +601,31 @@ export default function InvestigationWorkspace() {
   const [tab,  setTab]  = useState<0|1|2|3>(0);
   const [graphData, setGraphData] = useState<any>(null);
   const [selectedGraphNode, setSelectedGraphNode] = useState<any | null>(null);
+  const [binderSaved, setBinderSaved] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
 
-useEffect(() => {
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Handle Add to Case Binder
+  const handleAddToBinder = (activeLead: Lead) => {
+    addLeadToBinder(activeLead);
+    setBinderSaved(true);
+    setTimeout(() => setBinderSaved(false), 2000);
+  };
+
+  useEffect(() => {
     if (!txid) return;
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://bit-shield.onrender.com";
     const mock = MOCK_LEADS.find(l => l.txid === txid) ?? MOCK_LEADS[0];
     
-    fetch(`${API_BASE}/api/alerts/${txid}`)
+    fetch(`${API_URL}/api/alerts/${txid}`)
       .then(r => r.json())
       .then(d => setLead({ ...mock, ...d }))
       .catch(() => setLead(mock));
 
-    fetch(`${API_BASE}/api/graph/${txid}?hops=3`)
+    fetch(`${API_URL}/api/graph/${txid}?hops=3`)
       .then(r => r.json())
       .then(setGraphData)
       .catch(() => setGraphData(null));
@@ -597,7 +729,7 @@ useEffect(() => {
                   accent={lead.fan_out_ratio >= 8 ? "text-red-400" : undefined} />
                 <InfoRow label="Velocity Percentile" value={`${lead.velocity_percentile}th`}
                   accent={lead.velocity_percentile >= 95 ? "text-red-400" : "text-amber-400"} />
-                <InfoRow label="Timestamp"          value={new Date(lead.timestamp).toUTCString()} />
+                <InfoRow label="Timestamp"          value={isMounted ? new Date(lead.timestamp).toUTCString() : "2025-06-14T03:22:18Z"} />
                 <InfoRow label="ASN"               value={lead.asn} />
               </div>
               <div className="mt-5 p-3 bg-red-950/20 border border-red-900/40 rounded-xl text-[11px] font-sans text-red-300 leading-relaxed">
@@ -762,11 +894,24 @@ useEffect(() => {
                   BIT-SHIELD provides investigative leads — it does <strong className="text-white">not</strong> establish criminal intent, legal ownership, real-world identity, or guilt. All SHAP attributions are evidence of behavioral correlation, not proof of ownership.
                 </div>
                 <div className="flex gap-2">
-                  <Link href="/case-binder"
-                    className="flex-1 flex items-center justify-center gap-1.5 bg-white/[0.07] hover:bg-white/[0.12] text-slate-200 border border-white/[0.12] text-[10px] font-mono font-bold uppercase py-2.5 rounded-xl transition-all">
-                    Add to Case Binder <ChevronRight className="w-3 h-3" />
-                  </Link>
-                  <button className="flex-1 flex items-center justify-center gap-1.5 border border-slate-800 text-slate-400 hover:text-slate-200 text-[10px] font-mono font-bold uppercase py-2.5 rounded-xl transition-all">
+                  <button
+                    onClick={() => handleAddToBinder(lead)}
+                    className={`flex-1 flex items-center justify-center gap-1.5 text-[10px] font-mono font-bold uppercase py-2.5 rounded-xl transition-all border ${
+                      binderSaved
+                        ? "bg-emerald-950/40 border-emerald-700/60 text-emerald-400"
+                        : "bg-white/[0.07] hover:bg-white/[0.12] text-slate-200 border-white/[0.12]"
+                    }`}
+                  >
+                    {binderSaved ? (
+                      <><CheckCircle2 className="w-3 h-3" /> Saved to Binder ✓</>
+                    ) : (
+                      <>Add to Case Binder <ChevronRight className="w-3 h-3" /></>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleExportDossier(lead)}
+                    className="flex-1 flex items-center justify-center gap-1.5 border border-slate-800 text-slate-400 hover:text-slate-200 text-[10px] font-mono font-bold uppercase py-2.5 rounded-xl transition-all"
+                  >
                     <Download className="w-3 h-3" /> Export Dossier
                   </button>
                 </div>

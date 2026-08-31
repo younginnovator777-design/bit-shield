@@ -10,10 +10,24 @@ export default function GraphWorkspaceIndex() {
   const [leads, setLeads] = useState<Lead[]>(MOCK_LEADS);
 
   useEffect(() => {
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-    fetch(`${API_BASE}/api/alerts`)
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://bit-shield.onrender.com";
+    // If user has uploaded custom data in sessionStorage, skip background API fetch to prevent state overwrite
+    const sessionData = typeof window !== "undefined" ? sessionStorage.getItem("bit_shield_session_ingest") : null;
+    if (sessionData) {
+      try {
+        const stored = JSON.parse(sessionData);
+        if (Array.isArray(stored) && stored.length > 0) {
+          setLeads(stored as Lead[]);
+          return;
+        }
+      } catch { /* keep mock default */ }
+    }
+    fetch(`${API_URL}/api/alerts`)
       .then((r) => r.json())
-      .then(setLeads)
+      .then((data) => {
+        if (typeof window !== "undefined" && sessionStorage.getItem("bit_shield_session_ingest")) return;
+        setLeads(data);
+      })
       .catch(() => setLeads(MOCK_LEADS));
   }, []);
 

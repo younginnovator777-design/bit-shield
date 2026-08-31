@@ -293,13 +293,56 @@ export default function CommandCenter() {
   const [scatter, setScatter] = useState<string | null>(null);
 
   useEffect(() => {
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://bit-shield.onrender.com";
+
+    // Ingestion safeguard: if custom session dataset is active, DO NOT fetch from backend to prevent overwrite
+    const sessionData = typeof window !== "undefined" ? sessionStorage.getItem("bit_shield_session_ingest") : null;
+    if (sessionData) {
+      try {
+        const customLeads = JSON.parse(sessionData) as Lead[];
+        if (Array.isArray(customLeads) && customLeads.length > 0) {
+          setLeads(customLeads);
+          const highPriority = customLeads.filter(
+            (l) => l.priority_band === "Priority Lead" || l.risk_score >= 80
+          ).length;
+          const avgConf = Math.round(
+            customLeads.reduce((acc, l) => acc + (l.confidence_score || 0), 0) / customLeads.length
+          );
+          setOverview({
+            transactions_processed: customLeads.length * 125,
+            total_leads: customLeads.length,
+            high_priority_leads: highPriority,
+            avg_confidence: avgConf,
+            engine_status: "ONLINE",
+            last_run: new Date().toISOString(),
+            model_version: "iso-forest-v2.4.1 (Custom Session)",
+            records_per_second: 3200,
+            memory_mb: 420,
+            tree_depth: 12,
+          });
+          return; // Suppress backend API fetch
+        }
+      } catch (e) {
+        console.error("Failed to parse custom session ingest in command center", e);
+      }
+    }
 
     // Try API; fall back to mock
-    fetch(`${API_BASE}/api/overview`)
-      .then(r => r.json()).then(setOverview).catch(() => setOverview(MOCK_OVERVIEW));
-    fetch(`${API_BASE}/api/alerts`)
-      .then(r => r.json()).then(setLeads).catch(() => setLeads(MOCK_LEADS));
+    fetch(`${API_URL}/api/overview`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (typeof window !== "undefined" && sessionStorage.getItem("bit_shield_session_ingest")) return;
+        setOverview(data);
+      })
+      .catch(() => setOverview(MOCK_OVERVIEW));
+
+    fetch(`${API_URL}/api/alerts`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (typeof window !== "undefined" && sessionStorage.getItem("bit_shield_session_ingest")) return;
+        setLeads(data);
+      })
+      .catch(() => setLeads(MOCK_LEADS));
   }, []);
 
   const filtered = scatter ? leads.filter(l => l.priority_band === scatter) : leads;
