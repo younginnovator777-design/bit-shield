@@ -307,6 +307,9 @@ export const MOCK_OVERVIEW = {
   transactions_processed: 38420,
   total_leads: 6,
   high_priority_leads: 2,
+  high_risk_count: 5,
+  anomaly_threshold: 0.85,
+  active_cases: 3,
   avg_confidence: 63,
   engine_status: "ONLINE",
   last_run: "2025-06-14T22:45:00Z",
@@ -315,6 +318,8 @@ export const MOCK_OVERVIEW = {
   memory_mb: 412,
   tree_depth: 12,
 };
+
+export type OverviewStats = typeof MOCK_OVERVIEW;
 
 export const ACTIVITY_EVENTS = [
   "TX e8b21f4a: 14-output fan-out detected — AS45102 correlation confirmed",

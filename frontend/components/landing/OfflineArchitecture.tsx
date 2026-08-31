@@ -1,210 +1,134 @@
 "use client";
 
 import { useState } from "react";
-import { HardDrive, Database, Network, Cpu, Eye, LayoutDashboard, Shield, Lock, Terminal, CheckCircle2, ArrowRight } from "lucide-react";
+import { HardDrive, Lock, ShieldCheck, Cpu, Terminal, Database, Server, Check } from "lucide-react";
 
 export default function OfflineArchitecture() {
   const [selectedLayer, setSelectedLayer] = useState<number>(0);
 
   const layers = [
     {
-      id: "LAYER 01",
-      name: "TRANSACTION DATA INGESTION",
-      tech: "Polars • Streaming IO • Schema Normalizer",
-      icon: Database,
-      input: "Raw Bitcoin Block dumps, CSV metadata, JSON dumps, PCAP network captures",
-      processing: "High-throughput parallel parsing without socket leaks or cloud ETL pipelines.",
-      output: "Normalized tabular stream of inputs, outputs, timestamps, fee rates, and peer IPs.",
+      id: "01",
+      name: "File Ingestion Layer",
+      tech: "Python Polars / Rust Parser",
+      desc: "Streams multi-gigabyte CSV, JSON, XML, or raw PCAP files directly into memory-mapped Apache Arrow format. Zero network calls or external API dependency.",
     },
     {
-      id: "LAYER 02",
-      name: "OFFLINE ENRICHMENT & METRICS",
-      tech: "Local MaxMind GeoIP DB • Local ASN Registry",
-      icon: HardDrive,
-      input: "Normalized transaction records + Raw IP addresses",
-      processing: "Resolves autonomous systems, broadcast ports, and geographical routing entirely from local embedded databases.",
-      output: "Enriched event vectors with IP/ASN provenance and latency deltas.",
+      id: "02",
+      name: "Graph Construction Engine",
+      tech: "Rust NetworkX Core",
+      desc: "Constructs in-memory directional multi-graphs linking inputs, outputs, addresses, IP addresses, and ASNs. Resolves Common-Input-Ownership clusters in milliseconds.",
     },
     {
-      id: "LAYER 03",
-      name: "DUAL-LAYER GRAPH & HEURISTICS",
-      tech: "NetworkX • CIOH Heuristics • Peeling Resolvers",
-      icon: Network,
-      input: "Multi-input/output transactions and enriched network records",
-      processing: "Applies Common-Input-Ownership heuristics to cluster distinct wallet addresses into single syndicate entities; constructs directed multi-hop graphs.",
-      output: "Relational graph topology with degree centrality, fan-out ratios, and peeling scores.",
+      id: "03",
+      name: "Isolation Forest Model",
+      tech: "Scikit-Learn C-Optimized",
+      desc: "Executes 100 orthogonal isolation trees over engineered feature matrices. Pre-trained model weights are stored locally with zero external API callbacks.",
     },
     {
-      id: "LAYER 04",
-      name: "AI ANOMALY ENGINE",
-      tech: "Scikit-Learn Isolation Forest (Local Deterministic)",
-      icon: Cpu,
-      input: "Engineered feature matrix (velocity, fan-out, graph degree, ASN rarity)",
-      processing: "Builds 100 orthogonal isolation trees locally to isolate anomalous transaction structures in high-dimensional feature space.",
-      output: "Continuous Anomaly Scores [0.0 - 1.0] indicating structural divergence from baseline.",
+      id: "04",
+      name: "SHAP Explainer Pipeline",
+      tech: "TreeSHAP Engine",
+      desc: "Calculates exact Shapley values per feature for isolated outliers. Generates mathematical attribution scores explaining precisely why a lead was flagged.",
     },
     {
-      id: "LAYER 05",
-      name: "MODEL EXPLAINABILITY CORE",
-      tech: "TreeSHAP Local Explainer",
-      icon: Eye,
-      input: "Trained Isolation Forest model + Anomaly candidate vectors",
-      processing: "Computes exact Shapley feature attributions to mathematically determine why an anomaly was flagged.",
-      output: "Granular feature impact vectors (e.g. Velocity: +0.32, Fan-out: +0.28).",
+      id: "05",
+      name: "Local FastAPI Dispatcher",
+      tech: "Uvicorn / SQLite Storage",
+      desc: "Exposes REST endpoints bound strictly to localhost (127.0.0.1). Persists case binders, audit logs, and analyst notes locally in SQLite database.",
     },
     {
-      id: "LAYER 06",
-      name: "FORENSIC COMMAND WORKSPACE",
-      tech: "Next.js • Vis.js • WebGL Accelerated Canvas",
-      icon: LayoutDashboard,
-      input: "Prioritized leads, SHAP explanations, and relational graphs",
-      processing: "Renders interactive multi-hop graph neighborhoods, timeline burst playback, and dossier generation.",
-      output: "Court-admissible investigative intelligence dossiers.",
+      id: "06",
+      name: "Next.js UI & Force Graph Canvas",
+      tech: "VisNetwork / React 19",
+      desc: "Client-side interactive visualization canvas with force-directed graph layouts, timeline scrubbing, and dossier export capabilities.",
     },
   ];
 
   return (
-    <section id="architecture" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-b border-slate-900">
+    <section id="architecture" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-b border-[var(--border-main)] transition-colors duration-300">
       
-      {/* Section Header */}
       <div className="max-w-3xl mb-16">
-        <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-slate-400 mb-3">
-          <Lock className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Offline Execution Architecture</span>
+        <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-3 font-bold">
+          <HardDrive className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
+          <span>Workstation Specifications</span>
         </div>
-        <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-6 leading-tight">
-          Designed for environments where <br />
-          <span className="text-slate-300">data cannot leave the room.</span>
+        <h2 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-6 leading-tight">
+          100% Offline Self-Contained <br />
+          <span className="text-slate-500 dark:text-slate-300">System Architecture.</span>
         </h2>
-        <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-sans mb-4">
-          BIT-SHIELD is engineered as a self-contained, Linux-deployable intelligence platform.
-        </p>
-        <p className="text-slate-400 text-sm leading-relaxed">
-          Data ingestion, feature engineering, anomaly detection, graph clustering, and explainability all execute locally — without relying on cloud inference, remote LLM endpoints, or external telemetry leaks.
+        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+          Built from the ground up for classified law enforcement air-gapped workstations and secure intelligence enclaves. Zero data leaves your machine.
         </p>
       </div>
 
-      {/* Offline System Status Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-16 font-mono text-xs">
-        <div className="bg-slate-950 p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between">
-          <span className="text-[10px] text-slate-400 uppercase">SYSTEM STATE</span>
-          <div className="text-emerald-400 font-bold flex items-center gap-1.5 mt-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>OFFLINE CORE</span>
-          </div>
-        </div>
-
-        <div className="bg-slate-950 p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between">
-          <span className="text-[10px] text-slate-400 uppercase">EXTERNAL NETWORK</span>
-          <div className="text-slate-300 font-bold mt-2">DISCONNECTED</div>
-        </div>
-
-        <div className="bg-slate-950 p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between">
-          <span className="text-[10px] text-slate-400 uppercase">AI ENGINE</span>
-          <div className="text-white font-bold mt-2">LOCAL ISOLATION</div>
-        </div>
-
-        <div className="bg-slate-950 p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between">
-          <span className="text-[10px] text-slate-400 uppercase">STORAGE ENGINE</span>
-          <div className="text-white font-bold mt-2">LOCAL DUCKDB/PARQUET</div>
-        </div>
-
-        <div className="bg-slate-950 p-4 rounded-xl border border-white/[0.08] flex flex-col justify-between col-span-2 md:col-span-1">
-          <span className="text-[10px] text-slate-400 uppercase">TELEMETRY LEAKAGE</span>
-          <div className="text-emerald-400 font-bold mt-2">ZERO (0.00%)</div>
-        </div>
-      </div>
-
-      {/* Under the Surface: 6-Stage Pipeline Stack */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left column: 6-Stage Interactive Vertical Flow (5 cols) */}
-        <div className="lg:col-span-5 space-y-2 font-mono">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-1">
-            UNDER THE SURFACE • EXECUTION STACK
-          </div>
-          
+        {/* Layer Buttons Selector */}
+        <div className="lg:col-span-6 space-y-3">
           {layers.map((layer, idx) => (
             <button
               key={layer.id}
-              type="button"
               onClick={() => setSelectedLayer(idx)}
-              className={`w-full p-4 rounded-xl text-left border transition-all duration-300 flex items-center justify-between ${
+              className={`w-full p-4 rounded-xl border text-left transition-all font-mono flex items-center justify-between ${
                 selectedLayer === idx
-                  ? "bg-slate-900 border-slate-500 shadow-[0_0_20px_rgba(255,255,255,0.08)] ring-1 ring-slate-400"
-                  : "bg-slate-950/60 border-slate-800/80 hover:border-slate-700 text-slate-400"
+                  ? "bg-[var(--bg-card)] border-indigo-500/50 dark:border-slate-500 text-slate-900 dark:text-white shadow-md font-bold"
+                  : "bg-[var(--bg-card)] border-[var(--border-main)] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 shadow-xs"
               }`}
             >
-              <div className="flex items-center space-x-3">
-                <layer.icon className={`w-4 h-4 ${selectedLayer === idx ? "text-white" : "text-slate-500"}`} />
-                <div>
-                  <div className="text-[10px] text-slate-400">{layer.id}</div>
-                  <div className={`text-xs font-bold tracking-wide ${selectedLayer === idx ? "text-white" : "text-slate-300"}`}>
-                    {layer.name}
-                  </div>
-                </div>
+              <div className="flex items-center space-x-3 text-xs">
+                <span className="text-slate-400 dark:text-slate-500 text-[10px] font-bold">{layer.id}</span>
+                <span>{layer.name}</span>
               </div>
-              <span className="text-xs text-slate-500">→</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-normal">{layer.tech}</span>
             </button>
           ))}
         </div>
 
-        {/* Right column: Layer Deep Dive Inspector (7 cols) */}
-        <div className="lg:col-span-7 glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 font-mono">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+        {/* Selected Layer Specification Details */}
+        <div className="lg:col-span-6 ws-card p-6 sm:p-8 rounded-2xl space-y-5 shadow-xs">
+          
+          <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-4">
             <div>
-              <span className="text-[10px] text-slate-400 uppercase tracking-widest">
-                {layers[selectedLayer].id} SPECIFICATION
+              <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold">
+                LAYER {layers[selectedLayer].id} SPECIFICATION
               </span>
-              <h3 className="text-lg font-bold text-white mt-0.5">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white font-mono mt-1">
                 {layers[selectedLayer].name}
               </h3>
             </div>
-            <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white">
-              {(() => {
-                const IconComponent = layers[selectedLayer].icon;
-                return <IconComponent className="w-5 h-5" />;
-              })()}
-            </div>
+            <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/30 dark:border-emerald-800/50 px-2.5 py-1 rounded-full font-bold">
+              OFFLINE LOCAL
+            </span>
           </div>
 
-          <div className="space-y-4 text-xs font-sans">
-            <div>
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
-                STACK & ENGINE
-              </span>
-              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-slate-200">
-                {layers[selectedLayer].tech}
+          <div className="p-3 bg-[var(--bg-surface)] rounded-xl border border-[var(--border-main)] font-mono text-xs text-slate-800 dark:text-slate-200 flex justify-between items-center">
+            <span className="text-slate-500 dark:text-slate-400 font-semibold">Technology Stack:</span>
+            <span className="text-slate-900 dark:text-white font-bold">{layers[selectedLayer].tech}</span>
+          </div>
+
+          <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+            {layers[selectedLayer].desc}
+          </p>
+
+          <div className="space-y-2 pt-2">
+            <div className="text-[10px] font-mono uppercase text-slate-500 dark:text-slate-400 tracking-wider font-bold">SECURITY GUARANTEES</div>
+            <div className="space-y-1.5 text-xs font-mono text-slate-700 dark:text-slate-300">
+              <div className="flex items-center space-x-2">
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>Zero external network socket requests</span>
               </div>
-            </div>
-
-            <div>
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
-                INPUT SOURCES
-              </span>
-              <p className="text-slate-300 leading-relaxed bg-slate-950/60 p-3 rounded-xl border border-slate-850">
-                {layers[selectedLayer].input}
-              </p>
-            </div>
-
-            <div>
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
-                OFFLINE EXECUTION LOGIC
-              </span>
-              <p className="text-slate-300 leading-relaxed bg-slate-950/60 p-3 rounded-xl border border-slate-850">
-                {layers[selectedLayer].processing}
-              </p>
-            </div>
-
-            <div>
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
-                OUTPUT PRODUCT
-              </span>
-              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-slate-200">
-                {layers[selectedLayer].output}
+              <div className="flex items-center space-x-2">
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>All AI models pre-compiled locally</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>Court-exportable JSON & PDF dossiers</span>
               </div>
             </div>
           </div>
+
         </div>
 
       </div>

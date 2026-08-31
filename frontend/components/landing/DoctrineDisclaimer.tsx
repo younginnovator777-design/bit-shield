@@ -1,54 +1,55 @@
 "use client";
 
-import { Shield, Scale, Info, CheckCircle2 } from "lucide-react";
+import { Shield, AlertTriangle, FileText, Scale, CheckCircle2 } from "lucide-react";
 
 export default function DoctrineDisclaimer() {
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-b border-slate-900">
-      <div className="glass-panel p-8 sm:p-12 rounded-3xl border border-slate-800/90 relative overflow-hidden bg-gradient-to-br from-slate-950/90 via-[#07090e] to-slate-950/90">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-b border-[var(--border-main)] transition-colors duration-300">
+      
+      <div className="glass-panel p-8 sm:p-10 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-main)] relative overflow-hidden">
         
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          
-          <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-slate-400 bg-slate-900/90 border border-slate-800 px-3.5 py-1.5 rounded-full">
-            <Scale className="w-3.5 h-3.5 text-slate-300" />
-            <span>Evidentiary & Legal Doctrine</span>
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white">
+            <Scale className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+          </div>
+          <div>
+            <div className="text-xs font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold">INTELLIGENCE DOCTRINE & EVIDENTIARY BOUNDARIES</div>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-mono">
+              Intelligence Leads vs. Legal Proof
+            </h2>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-sans leading-relaxed">
+          <div className="space-y-3 p-5 bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] shadow-xs">
+            <div className="flex items-center space-x-2 font-mono font-bold text-slate-900 dark:text-white">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>WHAT BIT-SHIELD PROVIDES</span>
+            </div>
+            <p className="text-slate-600 dark:text-slate-400">
+              BIT-SHIELD surfaces explainable investigative leads by identifying statistical anomalies across transaction velocity, graph topology, and P2P network co-location. It narrows down millions of records into prioritized targets for human investigator review.
+            </p>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight">
-            Intelligence, not accusation.
-          </h2>
-
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-sans max-w-3xl mx-auto">
-            BIT-SHIELD identifies anomalous patterns and generates investigative leads. It does not establish criminal intent, legal ownership, real-world identity, or guilt.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left font-mono text-xs pt-4">
-            
-            <div className="p-5 bg-slate-950/80 rounded-2xl border border-slate-800/90 space-y-2">
-              <div className="flex items-center space-x-2 text-slate-200 font-bold text-[11px] uppercase tracking-wider">
-                <Info className="w-3.5 h-3.5 text-slate-400" />
-                <span>Correlation ≠ Ownership</span>
-              </div>
-              <p className="text-slate-400 text-xs font-sans leading-relaxed">
-                Network observations (IP broadcasts, ASN routing, and peer latency) are treated as evidence of technical correlation during block propagation, never as direct proof of wallet private-key custody.
-              </p>
+          <div className="space-y-3 p-5 bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] shadow-xs">
+            <div className="flex items-center space-x-2 font-mono font-bold text-slate-900 dark:text-white">
+              <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <span>WHAT REQUIRES HUMAN CORROBORATION</span>
             </div>
-
-            <div className="p-5 bg-slate-950/80 rounded-2xl border border-slate-800/90 space-y-2">
-              <div className="flex items-center space-x-2 text-slate-200 font-bold text-[11px] uppercase tracking-wider">
-                <Info className="w-3.5 h-3.5 text-slate-400" />
-                <span>Entity Clustering = Inference</span>
-              </div>
-              <p className="text-slate-400 text-xs font-sans leading-relaxed">
-                Common-Input-Ownership and multi-input clustering are probabilistic heuristics designed to focus human analyst attention, preserving evidentiary integrity for court proceedings.
-              </p>
-            </div>
-
+            <p className="text-slate-600 dark:text-slate-400">
+              BIT-SHIELD outputs do not independently prove criminal intent, real-world identity, or legal guilt. All SHAP feature attributions and co-spending clusters represent behavioral correlation and require statutory subpoena, exchange KYC matching, or law enforcement corroboration.
+            </p>
           </div>
+        </div>
 
+        <div className="mt-6 pt-4 border-t border-[var(--border-subtle)] flex flex-wrap items-center justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400 gap-2">
+          <span>HUMAN-IN-THE-LOOP MANDATE</span>
+          <span>PMLA / FIU-INDIA COMPLIANT LEADS</span>
+          <span>OFFLINE LOCAL AUDIT TRAIL</span>
         </div>
 
       </div>
+
     </section>
   );
 }
