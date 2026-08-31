@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   FolderOpen, Clock, Shield, Download, X, ChevronRight, AlertTriangle,
@@ -34,15 +34,15 @@ function ExportModal({ caseData, onClose }: { caseData: typeof CASE_BINDER_DATA;
   }, null, 2);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="w-full max-w-2xl mx-4 ws-card p-6 rounded-2xl drawer-slide-in" style={{ maxHeight: "80vh" }}>
-        <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-4">
+      <div className="w-full max-w-2xl mx-4 ws-card p-6 rounded-2xl drawer-slide-in shadow-2xl" style={{ maxHeight: "80vh" }}>
+        <div className="flex items-center justify-between mb-4 border-b border-[var(--border-main)] pb-4">
           <div>
-            <h2 className="text-sm font-bold text-white font-mono uppercase">Report Export Preview</h2>
-            <p className="text-[11px] text-slate-400 mt-0.5">{caseData.case_id} · {caseData.title}</p>
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white font-mono uppercase">Report Export Preview</h2>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{caseData.case_id} · {caseData.title}</p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/[0.06] text-slate-400 hover:text-white transition">
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--bg-surface)] text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -50,48 +50,48 @@ function ExportModal({ caseData, onClose }: { caseData: typeof CASE_BINDER_DATA;
         {/* Format toggle */}
         <div className="flex gap-2 mb-4">
           <button onClick={() => setFormat("json")}
-            className={`flex-1 py-2 rounded-xl text-[10px] font-mono font-bold uppercase border transition ${format === "json" ? "bg-white/[0.1] border-white/[0.2] text-white" : "border-slate-800 text-slate-500 hover:text-slate-300"}`}>
+            className={`flex-1 py-2 rounded-xl text-[10px] font-mono font-bold uppercase border transition ${format === "json" ? "bg-slate-900 text-white dark:bg-white dark:text-slate-950 border-slate-900 dark:border-white font-black" : "border-[var(--border-main)] bg-[var(--bg-surface)] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"}`}>
             <FileText className="inline w-3 h-3 mr-1" />JSON
           </button>
           <button onClick={() => setFormat("pdf")}
-            className={`flex-1 py-2 rounded-xl text-[10px] font-mono font-bold uppercase border transition ${format === "pdf" ? "bg-white/[0.1] border-white/[0.2] text-white" : "border-slate-800 text-slate-500 hover:text-slate-300"}`}>
+            className={`flex-1 py-2 rounded-xl text-[10px] font-mono font-bold uppercase border transition ${format === "pdf" ? "bg-slate-900 text-white dark:bg-white dark:text-slate-950 border-slate-900 dark:border-white font-black" : "border-[var(--border-main)] bg-[var(--bg-surface)] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"}`}>
             <Package className="inline w-3 h-3 mr-1" />PDF
           </button>
         </div>
 
         {format === "json" ? (
-          <div className="overflow-y-auto rounded-xl bg-slate-950 border border-slate-800 p-4" style={{ maxHeight: "45vh" }}>
-            <pre className="text-[10px] font-mono text-slate-300 whitespace-pre-wrap">{jsonPreview}</pre>
+          <div className="overflow-y-auto rounded-xl bg-[var(--bg-surface)] border border-[var(--border-main)] p-4" style={{ maxHeight: "45vh" }}>
+            <pre className="text-[10px] font-mono text-slate-800 dark:text-slate-200 whitespace-pre-wrap">{jsonPreview}</pre>
           </div>
         ) : (
-          <div className="p-6 bg-slate-950 border border-slate-800 rounded-xl text-[11px] font-mono text-slate-400 space-y-3">
-            <div className="text-center text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800 pb-3">
+          <div className="p-6 bg-[var(--bg-surface)] border border-[var(--border-main)] rounded-xl text-[11px] font-mono text-slate-700 dark:text-slate-300 space-y-3">
+            <div className="text-center text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider border-b border-[var(--border-main)] pb-3">
               ——— OFFICIAL INTELLIGENCE DOSSIER ———
             </div>
-            <div className="text-center text-[10px] text-slate-500">FOR OFFICIAL USE ONLY · FIU-INDIA / NTRO</div>
+            <div className="text-center text-[10px] text-slate-500 dark:text-slate-400 font-bold">FOR OFFICIAL USE ONLY · FIU-INDIA / NTRO</div>
             <div className="grid grid-cols-2 gap-2 text-[10px] pt-2">
               <InfoLine label="Case ID" value={caseData.case_id} />
               <InfoLine label="Title"   value={caseData.title} />
               <InfoLine label="Analyst" value={caseData.analyst} />
               <InfoLine label="Status"  value={caseData.status} />
             </div>
-            <div className="border-t border-slate-800 pt-3 space-y-1">
+            <div className="border-t border-[var(--border-main)] pt-3 space-y-1">
               {leads.map(l => (
-                <div key={l.txid} className="flex justify-between py-1 border-b border-slate-900 text-[10px]">
-                  <span className="text-slate-400">{l.txid}</span>
-                  <span className={l.risk_score >= 80 ? "text-red-400" : "text-amber-400"}>Risk {l.risk_score}</span>
+                <div key={l.txid} className="flex justify-between py-1 border-b border-[var(--border-subtle)] text-[10px]">
+                  <span className="text-slate-600 dark:text-slate-400">{l.txid}</span>
+                  <span className={l.risk_score >= 80 ? "text-red-600 dark:text-red-400 font-bold" : "text-amber-600 dark:text-amber-400 font-bold"}>Risk {l.risk_score}</span>
                 </div>
               ))}
             </div>
-            <div className="text-center text-[9px] text-slate-600 pt-2">Generated offline · No external network transmission</div>
+            <div className="text-center text-[9px] text-slate-500 dark:text-slate-400 pt-2">Generated offline · No external network transmission</div>
           </div>
         )}
 
         <div className="flex gap-3 mt-4">
-          <button className="flex-1 flex items-center justify-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] text-slate-200 border border-white/[0.12] py-2.5 rounded-xl text-[10px] font-mono font-bold uppercase transition-all">
+          <button className="flex-1 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 border border-slate-900 dark:border-white py-2.5 rounded-xl text-[10px] font-mono font-bold uppercase transition-all shadow-2xs">
             <Download className="w-3 h-3" /> Download {format.toUpperCase()}
           </button>
-          <button onClick={onClose} className="px-5 border border-slate-800 text-slate-500 hover:text-slate-300 py-2.5 rounded-xl text-[10px] font-mono font-bold uppercase transition">
+          <button onClick={onClose} className="px-5 border border-[var(--border-main)] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 py-2.5 rounded-xl text-[10px] font-mono font-bold uppercase transition bg-[var(--bg-surface)]">
             Close
           </button>
         </div>
@@ -101,8 +101,6 @@ function ExportModal({ caseData, onClose }: { caseData: typeof CASE_BINDER_DATA;
 }
 
 // ── Main Case Binder ────────────────────────────────────────────────────
-import { useEffect } from "react"; // ADD THIS IMPORT AT THE VERY TOP OF THE FILE IF IT IS MISSING
-
 export default function CaseBinder() {
   const [showExport, setShowExport] = useState(false);
   const [leads, setLeads] = useState<Lead[]>(MOCK_LEADS);
@@ -125,36 +123,36 @@ export default function CaseBinder() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
-            <FolderOpen className="w-4 h-4 text-slate-400" />
-            <h1 className="text-lg font-black text-white font-mono uppercase tracking-wide">Case Binder</h1>
+            <FolderOpen className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+            <h1 className="text-lg font-black text-slate-900 dark:text-white font-mono uppercase tracking-wide">Case Binder</h1>
           </div>
-          <p className="text-xs text-slate-400">Evidence management · Chain of custody · Export</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 font-sans">Evidence management · Chain of custody · Export</p>
         </div>
         <button onClick={() => setShowExport(true)}
-          className="flex items-center gap-2 bg-white/[0.07] hover:bg-white/[0.12] border border-white/[0.12] text-slate-200 text-[10px] font-mono font-bold uppercase px-4 py-2 rounded-xl transition-all">
+          className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 border border-slate-900 dark:border-white dark:text-slate-950 text-[10px] font-mono font-bold uppercase px-4 py-2 rounded-xl transition-all shadow-2xs">
           <Download className="w-3 h-3" /> Export Dossier
         </button>
       </div>
 
       {/* Case identity card */}
       <div className="ws-card p-5">
-        <div className="flex items-center gap-3 mb-5 border-b border-slate-800 pb-4">
-          <div className="p-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08]">
-            <Shield className="w-5 h-5 text-slate-200" />
+        <div className="flex items-center gap-3 mb-5 border-b border-[var(--border-main)] pb-4">
+          <div className="p-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-main)]">
+            <Shield className="w-5 h-5 text-slate-800 dark:text-slate-200" />
           </div>
           <div className="flex-1">
-            <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">{CASE_BINDER_DATA.case_id}</div>
-            <h2 className="text-base font-bold text-white font-mono">{CASE_BINDER_DATA.title}</h2>
+            <div className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">{CASE_BINDER_DATA.case_id}</div>
+            <h2 className="text-base font-bold text-slate-900 dark:text-white font-mono">{CASE_BINDER_DATA.title}</h2>
           </div>
-          <span className="text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-amber-950/50 border border-amber-800/60 text-amber-400">
+          <span className="text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-amber-500/10 dark:bg-amber-950/50 border border-amber-500/30 dark:border-amber-800/60 text-amber-700 dark:text-amber-400">
             {CASE_BINDER_DATA.status}
           </span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px] font-mono">
-          <div><span className="text-slate-500">Analyst:</span> <span className="text-slate-200">{CASE_BINDER_DATA.analyst}</span></div>
-          <div><span className="text-slate-500">Created:</span> <span className="text-slate-200">{new Date(CASE_BINDER_DATA.created).toLocaleDateString()}</span></div>
-          <div><span className="text-slate-500">Leads:</span> <span className="text-slate-200">{CASE_BINDER_DATA.leads.length}</span></div>
-          <div><span className="text-slate-500">Actions:</span> <span className="text-slate-200">{CASE_BINDER_DATA.audit_log.length}</span></div>
+          <div><span className="text-slate-500 dark:text-slate-400">Analyst:</span> <span className="text-slate-900 dark:text-slate-200 font-semibold">{CASE_BINDER_DATA.analyst}</span></div>
+          <div><span className="text-slate-500 dark:text-slate-400">Created:</span> <span className="text-slate-900 dark:text-slate-200 font-semibold">{new Date(CASE_BINDER_DATA.created).toLocaleDateString()}</span></div>
+          <div><span className="text-slate-500 dark:text-slate-400">Leads:</span> <span className="text-slate-900 dark:text-slate-200 font-semibold">{CASE_BINDER_DATA.leads.length}</span></div>
+          <div><span className="text-slate-500 dark:text-slate-400">Actions:</span> <span className="text-slate-900 dark:text-slate-200 font-semibold">{CASE_BINDER_DATA.audit_log.length}</span></div>
         </div>
       </div>
 
@@ -167,16 +165,16 @@ export default function CaseBinder() {
           <div className="space-y-3">
             {caseLeads.map(lead => (
               <div key={lead.txid}
-                className="flex items-center justify-between p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/60 gap-3">
+                className="flex items-center justify-between p-3.5 bg-[var(--bg-surface)] rounded-xl border border-[var(--border-main)] gap-3 shadow-2xs">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[11px] font-mono text-slate-300">{lead.txid}</span>
+                    <span className="text-[11px] font-mono text-slate-900 dark:text-slate-200 font-bold">{lead.txid}</span>
                     <RiskBadge band={lead.priority_band} />
                   </div>
-                  <p className="text-[10px] text-slate-500 line-clamp-1 font-sans">{lead.shap_explanation}</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 line-clamp-1 font-sans">{lead.shap_explanation}</p>
                 </div>
                 <Link href={`/investigation/${lead.txid}`}
-                  className="shrink-0 flex items-center gap-1 text-[9px] font-mono text-slate-400 hover:text-white border border-slate-800 hover:border-slate-600 px-2.5 py-1.5 rounded-lg transition-all">
+                  className="shrink-0 flex items-center gap-1 text-[9px] font-mono font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border-main)] px-2.5 py-1.5 rounded-lg transition-all bg-[var(--bg-card)] shadow-2xs">
                   <Eye className="w-2.5 h-2.5" /> View
                 </Link>
               </div>
@@ -192,19 +190,19 @@ export default function CaseBinder() {
               <div key={i} className="flex gap-3 pb-4 last:pb-0">
                 {/* Timeline line */}
                 <div className="flex flex-col items-center">
-                  <div className="w-2 h-2 rounded-full bg-slate-600 border border-slate-500 mt-1 shrink-0 z-10" />
+                  <div className="w-2 h-2 rounded-full bg-slate-500 dark:bg-slate-400 border border-slate-600 mt-1 shrink-0 z-10" />
                   {i < CASE_BINDER_DATA.audit_log.length - 1 && (
-                    <div className="flex-1 w-px bg-slate-800 mt-1" />
+                    <div className="flex-1 w-px bg-slate-300 dark:bg-slate-800 mt-1" />
                   )}
                 </div>
                 <div className="flex-1 pb-0">
                   <div className="flex items-center justify-between mb-0.5">
-                    <span className="text-[10px] font-mono font-bold text-slate-200">{entry.action}</span>
-                    <span className="text-[9px] font-mono text-slate-600">
+                    <span className="text-[10px] font-mono font-bold text-slate-900 dark:text-slate-200">{entry.action}</span>
+                    <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400 font-semibold">
                       {new Date(entry.ts).toLocaleTimeString()}
                     </span>
                   </div>
-                  <p className="text-[10px] text-slate-500 font-sans">{entry.detail}</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 font-sans">{entry.detail}</p>
                 </div>
               </div>
             ))}
@@ -220,8 +218,8 @@ export default function CaseBinder() {
 function InfoLine({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex gap-2">
-      <span className="text-slate-600">{label}:</span>
-      <span className="text-slate-300">{value}</span>
+      <span className="text-slate-500 dark:text-slate-400 font-semibold">{label}:</span>
+      <span className="text-slate-900 dark:text-slate-200 font-bold">{value}</span>
     </div>
   );
 }
