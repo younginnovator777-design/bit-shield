@@ -5,11 +5,86 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft, Clock, Network, Cpu, Compass, Shield, AlertTriangle,
-  GitCommit, ChevronRight, Info, HelpCircle, Download,
+  GitCommit, ChevronRight, Info, HelpCircle, Download, CheckCircle2,
 } from "lucide-react";
 import { MOCK_LEADS, type Lead } from "@/components/workspace/MockData";
 import { RiskBadge, ShapBar, GlassCard, SectionHeader, Tooltip } from "@/components/workspace/ui";
 import { useTheme } from "@/components/ThemeProvider";
+
+// ── localStorage helpers ────────────────────────────────────────────────
+const LS_BINDER_KEY = "bit_shield_case_binder";
+
+function getBinderLeads(): Lead[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem(LS_BINDER_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function addLeadToBinder(lead: Lead): void {
+  const existing = getBinderLeads();
+  if (existing.some((l) => l.txid === lead.txid)) return;
+  localStorage.setItem(LS_BINDER_KEY, JSON.stringify([lead, ...existing]));
+}
+
+// ── Browser File Download Helper ────────────────────────────────────────
+export const downloadJSON = (filename: string, payload: any) => {
+  if (typeof window === "undefined") return;
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+// ── Export Dossier Helper ────────────────────────────────────────────────
+function handleExportDossier(lead: Lead): void {
+  const dossier = {
+    classification: "OFFICIAL — FOR AUTHORIZED USE ONLY",
+    generated_at: new Date().toISOString(),
+    txid: lead.txid,
+    anomaly_risk: lead.risk_score,
+    confidence_score: lead.confidence_score,
+    priority_band: lead.priority_band,
+    top_feature: lead.top_feature,
+    shap_explanation: lead.shap_explanation,
+    shap_breakdown: (lead.shap_values || []).map((s) => ({
+      feature: s.feature,
+      contribution: s.value,
+      direction: s.direction,
+    })),
+    temporal_burst_signature: (lead.timeline_events || []).map((e) => ({
+      offset_ms: e.offset_ms,
+      type: e.type,
+      label: e.label,
+      amount_btc: e.amount_btc,
+    })),
+    investigator_actions: lead.investigator_actions || [],
+    neighborhood_nodes: (lead.neighborhood_nodes || []).map((n) => ({
+      id: n.id,
+      type: (n.type || "unknown").toUpperCase(),
+      risk: n.risk ?? lead.risk_score,
+    })),
+    metadata: {
+      amount_btc: lead.amount_btc,
+      output_count: lead.output_count,
+      asn: lead.asn,
+      ip: lead.ip,
+      timestamp: lead.timestamp,
+      velocity_percentile: lead.velocity_percentile,
+      fan_out_ratio: lead.fan_out_ratio,
+      graph_centrality: lead.graph_centrality,
+    },
+  };
+
+  downloadJSON(`${lead.txid}_dossier.json`, dossier);
+}
 
 // ── Timeline Visualizer ─────────────────────────────────────────────────
 function TimelineView({ events }: { events: Lead["timeline_events"] }) {
@@ -51,7 +126,6 @@ function TimelineView({ events }: { events: Lead["timeline_events"] }) {
   );
 }
 
-
 // ── Smart Multi-Layer Force-Directed Graph ──────────────────────────────
 function SmartNeighborhoodGraph({
   lead,
@@ -84,8 +158,47 @@ function SmartNeighborhoodGraph({
       let rawEdges: any[] = [];
 
       if (graphData && graphData.nodes && graphData.nodes.length > 0) {
-        rawNodes = graphData.nodes;
-        rawEdges = graphData.edges || [];
+        rawNodes = (graphData.nodes as any[]).map((n) => {
+          const nodeType = (n.type || n.node_type || "wallet").toLowerCase();
+          const nodeRisk = n.risk ?? n.risk_score ?? lead.risk_score ?? 50;
+          const labelMap: Record<string, string> = {
+            transaction: `TX: ${(n.id || "").slice(0, 8)}…`,
+            tx:          `TX: ${(n.id || "").slice(0, 8)}…`,
+            wallet:      `Wallet: ${(n.id || "").slice(0, 8)}…`,
+            ip:          `IP: ${n.id}`,
+            endpoint:    `IP: ${n.id}`,
+            port:        `PORT: ${n.id}`,
+            asn:         `ASN: ${n.id}`,
+            exchange:    `Exchange: ${(n.id || "").slice(0, 8)}…`,
+            mixer:       `Mixer: ${(n.id || "").slice(0, 8)}…`,
+          };
+          const metaMap: Record<string, string> = {
+            transaction: "On-chain Transaction",
+            tx:          "On-chain Transaction",
+            wallet:      "Wallet Entity",
+            ip:          "Peer IP Endpoint",
+            endpoint:    "Peer IP Endpoint",
+            port:        "P2P Propagation Port",
+            asn:         "ASN Routing",
+            exchange:    "Exchange Hop",
+            mixer:       "Mixer / Coinjoin",
+          };
+          return {
+            id: n.id || n.label,
+            label: n.label || labelMap[nodeType] || `${nodeType.toUpperCase()}: ${n.id}`,
+            fullId: n.id,
+            type: nodeType,
+            risk: nodeRisk,
+            meta: metaMap[nodeType] || nodeType.toUpperCase(),
+          };
+        });
+        rawEdges = (graphData.edges as any[]).map((e) => ({
+          from: e.from || e.source,
+          to: e.to || e.target,
+          relation: e.relation || e.label || "OBSERVED_WITH",
+          anomalous: e.anomalous ?? false,
+          weight: e.weight ?? 1,
+        }));
       } else {
         const mainTx = {
           id: lead.txid,
@@ -258,11 +371,15 @@ function SmartNeighborhoodGraph({
       };
 
       const nodes = rawNodes.map((n) => {
-        const conf = getNodeConfig(n.type, n.risk);
+        const safeType = (n.type || n.node_type || "wallet").toLowerCase().trim();
+        const nodeRisk = n.risk ?? lead.risk_score ?? 50;
+        const conf = getNodeConfig(safeType, nodeRisk);
+        const typeDisplay = (n.type || n.node_type || "unknown").toUpperCase();
+        const riskDisplay = n.risk ?? lead.risk_score ?? "N/A";
         return {
           id: n.id,
           label: n.label || n.id,
-          title: `Entity: ${n.fullId || n.id}\nType: ${n.type.toUpperCase()}\nRisk Score: ${n.risk ?? 'N/A'}\n${n.meta || ''}`,
+          title: `Entity: ${n.fullId || n.id || "N/A"}\nType: ${typeDisplay}\nRisk Score: ${riskDisplay}\n${n.meta || ""}`,
           shape: "dot",
           borderWidth: 2,
           borderWidthSelected: 3.5,
@@ -448,12 +565,12 @@ function SmartNeighborhoodGraph({
         <div className="absolute bottom-3 left-3 right-3 z-20 p-2.5 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-xl backdrop-blur-xl flex items-center justify-between text-xs font-mono shadow-xl">
           <div className="flex items-center gap-3">
             <span className="px-2 py-0.5 rounded bg-[var(--bg-surface)] text-[10px] font-bold uppercase text-slate-800 dark:text-slate-200 border border-[var(--border-main)]">
-              {selectedNode.type}
+              {(selectedNode.type || "unknown").toUpperCase()}
             </span>
             <span className="text-slate-900 dark:text-white font-bold">{selectedNode.fullId || selectedNode.id}</span>
-            {selectedNode.risk !== undefined && (
-              <span className={`text-[11px] font-bold ${selectedNode.risk >= 70 ? "text-red-600 dark:text-red-400" : "text-amber-600 dark:text-amber-400"}`}>
-                Risk: {selectedNode.risk}/100
+            {(selectedNode.risk !== undefined || lead.risk_score !== undefined) && (
+              <span className={`text-[11px] font-bold ${(selectedNode.risk ?? lead.risk_score) >= 70 ? "text-red-600 dark:text-red-400" : "text-amber-600 dark:text-amber-400"}`}>
+                Risk: {selectedNode.risk ?? lead.risk_score}/100
               </span>
             )}
           </div>
@@ -476,6 +593,19 @@ export default function InvestigationWorkspace() {
   const [tab,  setTab]  = useState<0|1|2|3>(0);
   const [graphData, setGraphData] = useState<any>(null);
   const [selectedGraphNode, setSelectedGraphNode] = useState<any | null>(null);
+  const [binderSaved, setBinderSaved] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [sidebarPage, setSidebarPage] = useState<number>(1);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const handleAddToBinder = (activeLead: Lead) => {
+    addLeadToBinder(activeLead);
+    setBinderSaved(true);
+    setTimeout(() => setBinderSaved(false), 2000);
+  };
 
   useEffect(() => {
     if (!txid) return;
@@ -578,7 +708,7 @@ export default function InvestigationWorkspace() {
             <div className="ws-card p-5">
               <SectionHeader icon={Clock} title="Temporal Burst Signature"
                 subtitle="Transaction velocity and inter-event timing" />
-              <TimelineView events={lead.timeline_events} />
+              <TimelineView events={lead.timeline_events || []} />
             </div>
             <div className="ws-card p-5">
               <SectionHeader icon={AlertTriangle} title="Burst Summary"
@@ -590,7 +720,7 @@ export default function InvestigationWorkspace() {
                   accent={lead.fan_out_ratio >= 8 ? "text-red-600 dark:text-red-400 font-bold" : undefined} />
                 <InfoRow label="Velocity Percentile" value={`${lead.velocity_percentile}th`}
                   accent={lead.velocity_percentile >= 95 ? "text-red-600 dark:text-red-400 font-bold" : "text-amber-600 dark:text-amber-400 font-bold"} />
-                <InfoRow label="Timestamp"          value={new Date(lead.timestamp).toUTCString()} />
+                <InfoRow label="Timestamp"          value={isMounted ? new Date(lead.timestamp).toUTCString() : "2025-06-14T03:22:18Z"} />
                 <InfoRow label="ASN"               value={lead.asn} />
               </div>
               <div className="mt-5 p-3 bg-red-500/10 dark:bg-red-950/20 border border-red-500/30 dark:border-red-900/40 rounded-xl text-[11px] font-sans text-red-700 dark:text-red-300 leading-relaxed font-medium">
@@ -654,37 +784,74 @@ export default function InvestigationWorkspace() {
 
             {/* Entity Index Sidebar */}
             <div className="ws-card p-5 flex flex-col">
-              <SectionHeader icon={Info} title="Entity Provenance Index" subtitle="Correlated Network & Chain Nodes" />
-              <div className="space-y-2 flex-1 overflow-y-auto max-h-[460px] pr-1">
-                {(lead.neighborhood_nodes || []).map((n) => (
-                  <div
-                    key={n.id}
-                    onClick={() => setSelectedGraphNode(n)}
-                    className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer text-[10px] font-mono ${
-                      selectedGraphNode?.id === n.id
-                        ? "bg-[var(--bg-surface)] border-slate-400 dark:border-slate-500 font-bold shadow-md"
-                        : "bg-[var(--bg-card)] border-[var(--border-main)] hover:border-slate-400 shadow-2xs"
-                    }`}
-                  >
-                    <div>
-                      <div className="text-slate-900 dark:text-slate-200 font-semibold">{n.id}</div>
-                      <div className="text-slate-500 dark:text-slate-400 text-[9px] uppercase tracking-wider">{n.type}</div>
-                    </div>
-                    {n.risk !== undefined && (
-                      <span
-                        className={`font-bold px-2 py-0.5 rounded ${
-                          n.risk >= 70
-                            ? "text-red-700 dark:text-red-400 bg-red-500/10 dark:bg-red-950/40 border border-red-500/30 dark:border-red-800/50"
-                            : n.risk >= 40
-                            ? "text-amber-700 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/30 dark:border-amber-800/50"
-                            : "text-slate-700 dark:text-slate-300 bg-[var(--bg-surface)] border border-[var(--border-main)]"
-                        }`}
-                      >
-                        Risk {n.risk}
-                      </span>
-                    )}
-                  </div>
-                ))}
+              <div className="flex items-center justify-between mb-4">
+                <SectionHeader icon={Info} title="Entity Provenance Index" subtitle="Correlated Network & Chain Nodes" />
+                <span className="text-[10px] font-mono font-bold text-slate-700 dark:text-slate-300 bg-[var(--bg-surface)] border border-[var(--border-main)] px-2 py-0.5 rounded">
+                  {(lead.neighborhood_nodes || []).length} Nodes
+                </span>
+              </div>
+              <div className="space-y-2 flex-1 overflow-y-auto max-h-[420px] pr-1 font-mono">
+                {(() => {
+                  const allNodes = lead.neighborhood_nodes || [];
+                  const NODES_PER_PAGE = 10;
+                  const totalNodePages = Math.max(1, Math.ceil(allNodes.length / NODES_PER_PAGE));
+                  const curPage = Math.min(sidebarPage, totalNodePages);
+                  const pagedNodes = allNodes.slice((curPage - 1) * NODES_PER_PAGE, curPage * NODES_PER_PAGE);
+
+                  return (
+                    <>
+                      {pagedNodes.map((n) => (
+                        <div
+                          key={n.id}
+                          onClick={() => setSelectedGraphNode(n)}
+                          className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer text-[10px] ${
+                            selectedGraphNode?.id === n.id
+                              ? "bg-[var(--bg-surface)] border-slate-400 dark:border-slate-500 font-bold shadow-md"
+                              : "bg-[var(--bg-card)] border-[var(--border-main)] hover:border-slate-400 shadow-2xs"
+                          }`}
+                        >
+                          <div>
+                            <div className="text-slate-900 dark:text-slate-200 font-semibold">{n.id}</div>
+                            <div className="text-slate-500 dark:text-slate-400 text-[9px] uppercase tracking-wider">{n.type}</div>
+                          </div>
+                          {n.risk !== undefined && (
+                            <span
+                              className={`font-bold px-2 py-0.5 rounded ${
+                                n.risk >= 70
+                                  ? "text-red-700 dark:text-red-400 bg-red-500/10 dark:bg-red-950/40 border border-red-500/30 dark:border-red-800/50"
+                                  : n.risk >= 40
+                                  ? "text-amber-700 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/30 dark:border-amber-800/50"
+                                  : "text-slate-700 dark:text-slate-300 bg-[var(--bg-surface)] border border-[var(--border-main)]"
+                              }`}
+                            >
+                              Risk {n.risk}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+
+                      {allNodes.length > NODES_PER_PAGE && (
+                        <div className="pt-2 mt-2 border-t border-[var(--border-main)] flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                          <button
+                            onClick={() => setSidebarPage((p) => Math.max(1, p - 1))}
+                            disabled={curPage <= 1}
+                            className="px-2 py-1 rounded border border-[var(--border-main)] bg-[var(--bg-surface)] hover:text-slate-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed uppercase font-bold"
+                          >
+                            Prev
+                          </button>
+                          <span>{curPage} / {totalNodePages}</span>
+                          <button
+                            onClick={() => setSidebarPage((p) => Math.min(totalNodePages, p + 1))}
+                            disabled={curPage >= totalNodePages}
+                            className="px-2 py-1 rounded border border-[var(--border-main)] bg-[var(--bg-surface)] hover:text-slate-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed uppercase font-bold"
+                          >
+                            Next
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -754,11 +921,24 @@ export default function InvestigationWorkspace() {
                   BIT-SHIELD provides investigative leads — it does <strong className="text-slate-900 dark:text-white">not</strong> establish criminal intent, legal ownership, real-world identity, or guilt. All SHAP attributions are evidence of behavioral correlation, not proof of ownership.
                 </div>
                 <div className="flex gap-2">
-                  <Link href="/case-binder"
-                    className="flex-1 flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 border border-slate-900 dark:border-white text-[10px] font-mono font-bold uppercase py-2.5 rounded-xl transition-all shadow-2xs">
-                    Add to Case Binder <ChevronRight className="w-3 h-3" />
-                  </Link>
-                  <button className="flex-1 flex items-center justify-center gap-1.5 border border-[var(--border-main)] bg-[var(--bg-surface)] text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-[10px] font-mono font-bold uppercase py-2.5 rounded-xl transition-all shadow-2xs">
+                  <button
+                    onClick={() => handleAddToBinder(lead)}
+                    className={`flex-1 flex items-center justify-center gap-1.5 text-[10px] font-mono font-bold uppercase py-2.5 rounded-xl transition-all border ${
+                      binderSaved
+                        ? "bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/40 dark:border-emerald-700/60 text-emerald-700 dark:text-emerald-400"
+                        : "bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 border border-slate-900 dark:border-white shadow-2xs"
+                    }`}
+                  >
+                    {binderSaved ? (
+                      <><CheckCircle2 className="w-3 h-3" /> Saved to Binder ✓</>
+                    ) : (
+                      <>Add to Case Binder <ChevronRight className="w-3 h-3" /></>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleExportDossier(lead)}
+                    className="flex-1 flex items-center justify-center gap-1.5 border border-[var(--border-main)] text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-[10px] font-mono font-bold uppercase py-2.5 rounded-xl transition-all bg-[var(--bg-surface)] shadow-2xs"
+                  >
                     <Download className="w-3 h-3" /> Export Dossier
                   </button>
                 </div>

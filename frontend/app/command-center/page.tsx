@@ -5,93 +5,241 @@ import Link from "next/link";
 import {
   LayoutDashboard, ShieldAlert, Cpu, List, Network, FolderOpen, Database,
   ArrowUpRight, AlertTriangle, CheckCircle2, ChevronRight, Zap, RefreshCw,
-  Clock, Eye, Filter, Sparkles, TrendingUp
+  Clock, Eye, Filter, Sparkles, TrendingUp, HelpCircle, Activity
 } from "lucide-react";
 import { MOCK_OVERVIEW, MOCK_LEADS, type OverviewStats, type Lead } from "@/components/workspace/MockData";
 import { RiskBadge, RiskBar, StatTile, GlassCard, SectionHeader, Tooltip } from "@/components/workspace/ui";
 import ActivityTicker from "@/components/workspace/ActivityTicker";
 import { useTheme } from "@/components/ThemeProvider";
 
+type SortField = "txid" | "risk" | "conf" | "band" | "btc" | "fan_out";
+type SortDirection = "asc" | "desc";
+
+const BAND_RANK: Record<Lead["priority_band"], number> = {
+  "Priority Lead": 4,
+  "Investigate Further": 3,
+  "Low Concern": 2,
+  "Insufficient Evidence": 1,
+};
+
+const ROWS_PER_PAGE = 25;
+
 // ── Theme-aware SVG Scatter Plot ──────────────────────────────────────────
-function RiskMatrixChart({ leads }: { leads: Lead[] }) {
-  const [hovered, setHovered] = useState<Lead | null>(null);
+function RiskMatrixChart({
+  leads,
+  selected,
+  onSelect,
+}: {
+  leads: Lead[];
+  selected: string | null;
+  onSelect: (band: string | null) => void;
+}) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  const width  = 440;
-  const height = 280;
-  const pad    = 40;
+  const W = 540;
+  const H = 240;
+  const PAD_LEFT = 48;
+  const PAD_RIGHT = 24;
+  const PAD_TOP = 20;
+  const PAD_BOTTOM = 34;
 
-  const xScale = (score: number) => pad + (score / 100) * (width  - 2 * pad);
-  const yScale = (conf:  number) => height - pad - (conf  / 100) * (height - 2 * pad);
+  const PLOT_W = W - PAD_LEFT - PAD_RIGHT;
+  const PLOT_H = H - PAD_TOP - PAD_BOTTOM;
+  const HALF_W = PLOT_W / 2;
+  const HALF_H = PLOT_H / 2;
+  const MID_X = PAD_LEFT + HALF_W;
+  const MID_Y = PAD_TOP + HALF_H;
+
+  const quadrants = [
+    {
+      id: "investigate",
+      x: PAD_LEFT,
+      y: PAD_TOP,
+      w: HALF_W,
+      h: HALF_H,
+      label: "Investigate Further",
+      tag: "INVESTIGATE FURTHER",
+      tagX: PAD_LEFT + 8,
+      tagY: PAD_TOP + 13,
+      bg: isDark ? "rgba(245, 158, 11, 0.08)" : "rgba(245, 158, 11, 0.05)",
+      tagColor: isDark ? "#fbbf24" : "#d97706",
+    },
+    {
+      id: "priority",
+      x: MID_X,
+      y: PAD_TOP,
+      w: HALF_W,
+      h: HALF_H,
+      label: "Priority Lead",
+      tag: "PRIORITY LEAD",
+      tagX: W - PAD_RIGHT - 8,
+      tagY: PAD_TOP + 13,
+      tagAnchor: "end",
+      bg: isDark ? "rgba(239, 68, 68, 0.1)" : "rgba(239, 68, 68, 0.06)",
+      tagColor: isDark ? "#f43f5e" : "#dc2626",
+    },
+    {
+      id: "insufficient",
+      x: PAD_LEFT,
+      y: MID_Y,
+      w: HALF_W,
+      h: HALF_H,
+      label: "Insufficient Evidence",
+      tag: "INSUFFICIENT EVIDENCE",
+      tagX: PAD_LEFT + 8,
+      tagY: H - PAD_BOTTOM - 6,
+      bg: isDark ? "rgba(148, 163, 184, 0.05)" : "rgba(100, 116, 139, 0.04)",
+      tagColor: isDark ? "#94a3b8" : "#64748b",
+    },
+    {
+      id: "low_concern",
+      x: MID_X,
+      y: MID_Y,
+      w: HALF_W,
+      h: HALF_H,
+      label: "Low Concern",
+      tag: "LOW CONCERN",
+      tagX: W - PAD_RIGHT - 8,
+      tagY: H - PAD_BOTTOM - 6,
+      tagAnchor: "end",
+      bg: isDark ? "rgba(16, 185, 129, 0.08)" : "rgba(16, 185, 129, 0.05)",
+      tagColor: isDark ? "#34d399" : "#059669",
+    },
+  ];
+
+  const plotX = (confidence: number) => PAD_LEFT + (Math.max(0, Math.min(100, confidence)) / 100) * PLOT_W;
+  const plotY = (risk: number) => (H - PAD_BOTTOM) - (Math.max(0, Math.min(100, risk)) / 100) * PLOT_H;
+
+  const dotColor: Record<Lead["priority_band"], string> = {
+    "Priority Lead": isDark ? "#f43f5e" : "#dc2626",
+    "Investigate Further": isDark ? "#fbbf24" : "#d97706",
+    "Low Concern": isDark ? "#34d399" : "#059669",
+    "Insufficient Evidence": isDark ? "#94a3b8" : "#64748b",
+  };
 
   return (
-    <div className="relative w-full overflow-hidden rounded-xl bg-[var(--bg-card)] border border-[var(--border-main)] p-3 shadow-xs">
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold">
-          ANOMALY RISK × CONFIDENCE MATRIX
-        </div>
-        <div className="flex gap-3 text-[9px] font-mono">
-          <span className="text-red-600 dark:text-rose-400 font-bold">■ Priority (&gt;80)</span>
-          <span className="text-amber-600 dark:text-amber-400 font-bold">■ Investigate (70–80)</span>
-          <span className="text-emerald-600 dark:text-emerald-400 font-bold">■ Low (&lt;70)</span>
-        </div>
+    <div className="w-full flex flex-col items-center justify-center overflow-hidden">
+      <div className="w-full flex items-center justify-center relative overflow-hidden">
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          className="w-full h-auto max-h-[260px] overflow-visible select-none"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          {/* Outer Boundary Box */}
+          <rect
+            x={PAD_LEFT}
+            y={PAD_TOP}
+            width={PLOT_W}
+            height={PLOT_H}
+            fill={isDark ? "#07090e" : "#f8fafc"}
+            stroke={isDark ? "rgba(255,255,255,0.1)" : "#cbd5e1"}
+            strokeWidth="1"
+            rx="6"
+          />
+
+          {/* Quadrants — Clickable */}
+          {quadrants.map((q) => {
+            const isSelected = selected === q.label;
+            return (
+              <g key={q.id} className="cursor-pointer" onClick={() => onSelect(isSelected ? null : q.label)}>
+                <rect
+                  x={q.x}
+                  y={q.y}
+                  width={q.w}
+                  height={q.h}
+                  fill={q.bg}
+                  stroke={isSelected ? q.tagColor : "transparent"}
+                  strokeWidth={isSelected ? "1.5" : "0"}
+                  className="transition-all duration-200"
+                />
+                <text
+                  x={q.tagX}
+                  y={q.tagY}
+                  textAnchor={(q.tagAnchor as any) ?? "start"}
+                  fontSize="8"
+                  fontWeight="bold"
+                  fontFamily="monospace"
+                  fill={q.tagColor}
+                  opacity={isSelected ? "1" : "0.85"}
+                >
+                  {q.tag}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Midpoint Dividing Gridlines */}
+          <line
+            x1={MID_X}
+            y1={PAD_TOP}
+            x2={MID_X}
+            y2={H - PAD_BOTTOM}
+            stroke={isDark ? "rgba(255,255,255,0.15)" : "#cbd5e1"}
+            strokeDasharray="4,4"
+            strokeWidth="1"
+          />
+          <line
+            x1={PAD_LEFT}
+            y1={MID_Y}
+            x2={W - PAD_RIGHT}
+            y2={MID_Y}
+            stroke={isDark ? "rgba(255,255,255,0.15)" : "#cbd5e1"}
+            strokeDasharray="4,4"
+            strokeWidth="1"
+          />
+
+          {/* Axis Ticks */}
+          <text x={PAD_LEFT} y={H - PAD_BOTTOM + 11} textAnchor="middle" fontSize="7" fill={isDark ? "#94a3b8" : "#64748b"} fontFamily="monospace">0%</text>
+          <text x={MID_X} y={H - PAD_BOTTOM + 11} textAnchor="middle" fontSize="7" fill={isDark ? "#94a3b8" : "#64748b"} fontFamily="monospace">50%</text>
+          <text x={W - PAD_RIGHT} y={H - PAD_BOTTOM + 11} textAnchor="middle" fontSize="7" fill={isDark ? "#94a3b8" : "#64748b"} fontFamily="monospace">100%</text>
+
+          <text x={PAD_LEFT - 6} y={H - PAD_BOTTOM} textAnchor="end" fontSize="7" fill={isDark ? "#94a3b8" : "#64748b"} fontFamily="monospace">0</text>
+          <text x={PAD_LEFT - 6} y={MID_Y + 3} textAnchor="end" fontSize="7" fill={isDark ? "#94a3b8" : "#64748b"} fontFamily="monospace">50</text>
+          <text x={PAD_LEFT - 6} y={PAD_TOP + 4} textAnchor="end" fontSize="7" fill={isDark ? "#94a3b8" : "#64748b"} fontFamily="monospace">100</text>
+
+          {/* Axis Labels */}
+          <text x={MID_X} y={H - 4} textAnchor="middle" fontSize="7" fontWeight="bold" fill={isDark ? "#94a3b8" : "#475569"} fontFamily="monospace">CONFIDENCE LEVEL (CORROBORATION) →</text>
+          <text x={12} y={MID_Y} textAnchor="middle" fontSize="7" fontWeight="bold" fill={isDark ? "#94a3b8" : "#475569"} fontFamily="monospace" transform={`rotate(-90, 12, ${MID_Y})`}>ANOMALY RISK ↑</text>
+
+          {/* Data Points */}
+          {leads.map((lead) => {
+            const cx = plotX(lead.confidence_score);
+            const cy = plotY(lead.risk_score);
+            const color = dotColor[lead.priority_band];
+            const isMatch = !selected || selected === lead.priority_band;
+
+            return (
+              <g key={lead.txid} className="cursor-pointer">
+                {isMatch && (
+                  <circle cx={cx} cy={cy} r={6} fill={color} opacity="0.25" />
+                )}
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  r={isMatch ? 4.5 : 3}
+                  fill={color}
+                  opacity={isMatch ? 0.95 : 0.3}
+                  stroke={isDark ? "#07090e" : "#ffffff"}
+                  strokeWidth="1.2"
+                  className="transition-all duration-200"
+                >
+                  <title>{`${lead.txid} (${lead.priority_band})\nRisk: ${lead.risk_score} / 100\nConfidence: ${lead.confidence_score}%`}</title>
+                </circle>
+              </g>
+            );
+          })}
+        </svg>
       </div>
+    </div>
+  );
+}
 
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto select-none">
-        {/* Quadrant dividing lines */}
-        <line x1={xScale(80)} y1={pad} x2={xScale(80)} y2={height - pad}
-          stroke={isDark ? "rgba(255,255,255,0.12)" : "#cbd5e1"} strokeDasharray="3 3" strokeWidth="1" />
-        <line x1={pad} y1={yScale(70)} x2={width - pad} y2={yScale(70)}
-          stroke={isDark ? "rgba(255,255,255,0.12)" : "#cbd5e1"} strokeDasharray="3 3" strokeWidth="1" />
-
-        {/* Quadrant labels */}
-        <text x={xScale(90)} y={yScale(85)} fill={isDark ? "#f43f5e" : "#dc2626"} fontSize="9" fontFamily="monospace" fontWeight="bold" opacity="0.8">PRIORITY</text>
-        <text x={xScale(90)} y={yScale(35)} fill={isDark ? "#fbbf24" : "#d97706"} fontSize="9" fontFamily="monospace" fontWeight="bold" opacity="0.8">INVESTIGATE</text>
-        <text x={xScale(40)} y={yScale(85)} fill={isDark ? "#34d399" : "#059669"} fontSize="9" fontFamily="monospace" fontWeight="bold" opacity="0.8">LOW CONCERN</text>
-        <text x={xScale(40)} y={yScale(35)} fill={isDark ? "#94a3b8" : "#64748b"} fontSize="9" fontFamily="monospace" fontWeight="bold" opacity="0.8">INSUFFICIENT</text>
-
-        {/* Axes */}
-        <line x1={pad} y1={height - pad} x2={width - pad} y2={height - pad} stroke={isDark ? "rgba(255,255,255,0.2)" : "#94a3b8"} strokeWidth="1.5" />
-        <line x1={pad} y1={pad} x2={pad} y2={height - pad} stroke={isDark ? "rgba(255,255,255,0.2)" : "#94a3b8"} strokeWidth="1.5" />
-
-        {/* Axis tick labels */}
-        <text x={width / 2} y={height - 8} fill={isDark ? "#94a3b8" : "#475569"} fontSize="9" fontFamily="monospace" textAnchor="middle">Risk Score →</text>
-        <text x={12} y={height / 2} fill={isDark ? "#94a3b8" : "#475569"} fontSize="9" fontFamily="monospace" textAnchor="middle" transform={`rotate(-90 12 ${height / 2})`}>Confidence % →</text>
-
-        {/* Scatter dots */}
-        {leads.map((l) => {
-          const cx = xScale(l.risk_score);
-          const cy = yScale(l.confidence_score);
-          const isHigh = l.risk_score >= 80;
-          const isMid  = l.risk_score >= 70 && l.risk_score < 80;
-          const dotColor = isHigh ? "#ef4444" : isMid ? "#f59e0b" : "#10b981";
-          const isHovered = hovered?.txid === l.txid;
-
-          return (
-            <g key={l.txid} onMouseEnter={() => setHovered(l)} onMouseLeave={() => setHovered(null)} className="cursor-pointer">
-              {isHigh && (
-                <circle cx={cx} cy={cy} r={isHovered ? 12 : 8} fill={dotColor} opacity="0.2" className="animate-ping" />
-              )}
-              <circle
-                cx={cx} cy={cy} r={isHovered ? 7 : 5}
-                fill={dotColor}
-                stroke={isHovered ? "#ffffff" : isDark ? "#07090e" : "#ffffff"}
-                strokeWidth={isHovered ? 2 : 1}
-                className="transition-all duration-150"
-              />
-            </g>
-          );
-        })}
-      </svg>
-
-      {/* Tooltip Overlay */}
-      {hovered && (
-        <div className="absolute bottom-3 left-3 bg-slate-900/95 border border-slate-700 text-slate-100 text-[10px] font-mono px-3 py-1.5 rounded-lg shadow-xl backdrop-blur-md pointer-events-none">
-          <div className="font-bold text-white">{hovered.txid}</div>
-          <div className="text-slate-400">Risk: <span className="text-red-400 font-bold">{hovered.risk_score}</span> · Conf: <span className="text-emerald-400 font-bold">{hovered.confidence_score}%</span></div>
-        </div>
-      )}
+function LegendRow({ color, label }: { color: string; label: string }) {
+  return (
+    <div className="flex items-center space-x-1.5 text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400">
+      <span className={`w-2 h-2 rounded-full ${color}`} />
+      <span>{label}</span>
     </div>
   );
 }
@@ -100,22 +248,106 @@ function RiskMatrixChart({ leads }: { leads: Lead[] }) {
 export default function CommandCenter() {
   const [overview, setOverview] = useState<OverviewStats>(MOCK_OVERVIEW);
   const [leads, setLeads]       = useState<Lead[]>(MOCK_LEADS);
+  const [scatter, setScatter]   = useState<string | null>(null);
+  const [sortField, setSortField] = useState<SortField>("risk");
+  const [sortDir, setSortDir]     = useState<SortDirection>("desc");
+  const [page, setPage]           = useState<number>(1);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+    // Ingestion safeguard: if custom session dataset is active, DO NOT fetch from backend to prevent overwrite
+    const sessionData = typeof window !== "undefined" ? sessionStorage.getItem("bit_shield_session_ingest") : null;
+    if (sessionData) {
+      try {
+        const customLeads = JSON.parse(sessionData) as Lead[];
+        if (Array.isArray(customLeads) && customLeads.length > 0) {
+          setLeads(customLeads);
+          const highPriority = customLeads.filter(
+            (l) => l.priority_band === "Priority Lead" || l.risk_score >= 80
+          ).length;
+          const avgConf = Math.round(
+            customLeads.reduce((acc, l) => acc + (l.confidence_score || 0), 0) / customLeads.length
+          );
+          setOverview({
+            transactions_processed: customLeads.length * 125,
+            total_leads: customLeads.length,
+            high_priority_leads: highPriority,
+            high_risk_count: highPriority,
+            anomaly_threshold: 0.85,
+            active_cases: 3,
+            avg_confidence: avgConf,
+            engine_status: "ONLINE",
+            last_run: new Date().toISOString(),
+            model_version: "iso-forest-v2.4.1 (Custom Session)",
+            records_per_second: 3200,
+            memory_mb: 420,
+            tree_depth: 12,
+          });
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse custom session ingest in command center", e);
+      }
+    }
+
     fetch(`${API_BASE}/api/overview`)
       .then((r) => r.json()).then(setOverview).catch(() => setOverview(MOCK_OVERVIEW));
     fetch(`${API_BASE}/api/alerts`)
       .then((r) => r.json()).then(setLeads).catch(() => setLeads(MOCK_LEADS));
   }, []);
 
-  const priorityLeads = leads.filter(l => l.risk_score >= 80);
+  const handleSelectScatter = (band: string | null) => {
+    setScatter(band);
+    setPage(1);
+  };
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("desc");
+    }
+    setPage(1);
+  };
+
+  const filtered = scatter ? leads.filter((l) => l.priority_band === scatter) : leads;
+
+  const sorted = [...filtered].sort((a, b) => {
+    let diff = 0;
+    if (sortField === "txid") {
+      diff = a.txid.localeCompare(b.txid);
+    } else if (sortField === "risk") {
+      diff = a.risk_score - b.risk_score;
+    } else if (sortField === "conf") {
+      diff = a.confidence_score - b.confidence_score;
+    } else if (sortField === "band") {
+      diff = (BAND_RANK[a.priority_band] ?? 0) - (BAND_RANK[b.priority_band] ?? 0);
+    } else if (sortField === "btc") {
+      diff = (a.amount_btc ?? 0) - (b.amount_btc ?? 0);
+    } else if (sortField === "fan_out") {
+      diff = (a.fan_out_ratio ?? 0) - (b.fan_out_ratio ?? 0);
+    }
+    return sortDir === "asc" ? diff : -diff;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / ROWS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedLeads = sorted.slice((currentPage - 1) * ROWS_PER_PAGE, currentPage * ROWS_PER_PAGE);
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <span className="opacity-30 text-[9px]">↕</span>;
+    }
+    return <span className="text-emerald-600 dark:text-emerald-400 font-bold text-[10px]">{sortDir === "asc" ? "▲" : "▼"}</span>;
+  };
 
   return (
     <div className="space-y-5 animate-fade-in-up">
 
-      {/* ── Page Header ─────────────────────────────────────────────── */}
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
@@ -130,7 +362,7 @@ export default function CommandCenter() {
         <div className="flex items-center space-x-2 shrink-0">
           <Link
             href="/ingestion"
-            className="flex items-center space-x-1.5 px-3 py-1.5 text-[11px] font-mono font-bold bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-300 rounded-lg border border-slate-300 dark:border-white/10 transition shadow-2xs"
+            className="flex items-center space-x-1.5 px-3 py-1.5 text-[11px] font-mono font-bold bg-[var(--bg-surface)] hover:bg-[var(--bg-card)] text-slate-700 dark:text-slate-300 rounded-lg border border-[var(--border-main)] transition shadow-2xs"
           >
             <Database className="w-3.5 h-3.5" />
             <span>Ingest Data</span>
@@ -148,12 +380,12 @@ export default function CommandCenter() {
       {/* Live Ticker */}
       <ActivityTicker />
 
-      {/* ── 4 Key Diagnostic Stat Tiles ──────────────────────────────── */}
+      {/* 4 Key Diagnostic Stat Tiles */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         <StatTile
           icon={ShieldAlert}
           label="CRITICAL PRIORITY LEADS"
-          value={overview.high_risk_count ?? 5}
+          value={overview.high_risk_count ?? overview.high_priority_leads ?? 5}
           subtext="Requires immediate investigation"
           accentColor="text-red-600 dark:text-red-400 font-bold"
         />
@@ -180,98 +412,85 @@ export default function CommandCenter() {
         />
       </div>
 
-      {/* ── Scatter Plot + Quick Triage Panel ───────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div className="lg:col-span-7 ws-card p-5 flex flex-col justify-between">
+      {/* Scatter Plot Matrix Card */}
+      <div className="ws-card p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 border-b border-[var(--border-subtle)] pb-3">
           <SectionHeader
-            icon={TrendingUp}
-            title="Risk × Confidence Triage Matrix"
-            subtitle="Real-time multi-dimensional vector distribution"
+            icon={Activity}
+            title="Risk × Confidence Matrix"
+            subtitle="Click quadrant to filter triage queue · Real-time 2D correlation matrix"
           />
-          <RiskMatrixChart leads={leads} />
+          {scatter && (
+            <div className="flex items-center gap-2 text-[10px] font-mono font-bold text-slate-800 dark:text-slate-200 bg-[var(--bg-surface)] border border-[var(--border-main)] px-3 py-1 rounded-lg self-start sm:self-auto shadow-2xs">
+              <Filter className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+              <span>Filter: <strong>{scatter}</strong></span>
+              <button
+                onClick={() => handleSelectScatter(null)}
+                className="ml-1 text-slate-500 hover:text-slate-900 dark:hover:text-white transition px-1 rounded"
+              >
+                ✕
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Quick Lead Drawer / Preview */}
-        <div className="lg:col-span-5 ws-card p-5 flex flex-col justify-between">
-          <SectionHeader
-            icon={ShieldAlert}
-            title="Top Priority Lead"
-            subtitle={selectedLead ? selectedLead.txid : priorityLeads[0]?.txid || "TXID-SELECT"}
-          />
+        <RiskMatrixChart leads={leads} selected={scatter} onSelect={handleSelectScatter} />
 
-          {(() => {
-            const active = selectedLead || priorityLeads[0] || leads[0];
-            if (!active) return null;
-
-            return (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <RiskBadge band={active.priority_band} />
-                  <span className="text-[10px] font-mono text-slate-500 dark:text-slate-500 font-bold">
-                    Score: {active.risk_score}/100
-                  </span>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-[10px] font-mono text-slate-500 dark:text-slate-500 mb-1 uppercase font-bold">
-                    <span>Anomaly Score</span>
-                    <span className={active.risk_score >= 80 ? "text-red-600 dark:text-red-400 font-bold" : "text-amber-600 dark:text-amber-400 font-bold"}>
-                      {active.risk_score}
-                    </span>
-                  </div>
-                  <RiskBar score={active.risk_score} />
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-[11px] font-sans text-slate-800 dark:text-slate-300 leading-relaxed">
-                  <strong className="font-mono text-slate-900 dark:text-white">Explanation:</strong> {active.shap_explanation}
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-[10px] font-mono text-slate-600 dark:text-slate-400">
-                  <div className="p-2 rounded bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                    <span className="text-slate-500 dark:text-slate-500">Amount:</span> <span className="text-slate-900 dark:text-white font-bold">{active.amount_btc} BTC</span>
-                  </div>
-                  <div className="p-2 rounded bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                    <span className="text-slate-500 dark:text-slate-500">Fan-Out:</span> <span className="text-slate-900 dark:text-white font-bold">{active.fan_out_ratio}×</span>
-                  </div>
-                </div>
-
-                <Link
-                  href={`/investigation/${active.txid}`}
-                  className="w-full flex items-center justify-center space-x-1.5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-xs font-mono font-bold rounded-xl transition shadow-xs uppercase tracking-wider"
-                >
-                  <span>Investigate Lead Canvas</span>
-                  <ChevronRight className="w-4 h-4" />
-                </Link>
-              </div>
-            );
-          })()}
+        <div className="mt-3 pt-3 border-t border-[var(--border-subtle)] flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono">
+          <div className="flex flex-wrap gap-4">
+            <LegendRow color="bg-red-600 dark:bg-rose-500" label="Priority Lead (≥80 Risk)" />
+            <LegendRow color="bg-amber-600 dark:bg-amber-400" label="Investigate Further" />
+            <LegendRow color="bg-emerald-600 dark:bg-emerald-400" label="Low Concern (<40 Risk)" />
+            <LegendRow color="bg-slate-500 dark:bg-slate-400" label="Insufficient Evidence" />
+          </div>
+          <span className="text-slate-500 dark:text-slate-400 font-bold text-[9px]">
+            Showing {sorted.length} of {leads.length} leads
+          </span>
         </div>
       </div>
 
-      {/* ── Priority Lead Table ────────────────────────────────────────── */}
+      {/* Priority Triage Queue Table */}
       <div className="ws-card p-5">
-        <SectionHeader
-          icon={List}
-          title="Critical Forensic Triage Queue"
-          subtitle={`${priorityLeads.length} leads requiring immediate investigator action`}
-        />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-[var(--border-subtle)] pb-3">
+          <SectionHeader
+            icon={List}
+            title="Priority Triage Queue"
+            subtitle={`${sorted.length} leads${scatter ? ` (filtered: ${scatter})` : " · all bands"}`}
+          />
+          <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <span>Sort:</span>
+            <span className="text-slate-900 dark:text-white font-bold uppercase">{sortField} ({sortDir})</span>
+          </div>
+        </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse font-mono text-xs">
             <thead>
-              <tr className="border-b border-[var(--border-main)] text-[10px] font-mono uppercase text-slate-500 dark:text-slate-400 bg-[var(--bg-surface)]">
-                <th className="py-3 px-3">TXID</th>
-                <th className="py-3 px-3">Priority Band</th>
-                <th className="py-3 px-3">Risk Score</th>
-                <th className="py-3 px-3">Confidence</th>
-                <th className="py-3 px-3">Value (BTC)</th>
-                <th className="py-3 px-3">Fan-Out</th>
-                <th className="py-3 px-3">Top Driving Feature</th>
+              <tr className="border-b border-[var(--border-main)] text-[10px] uppercase text-slate-500 dark:text-slate-400 bg-[var(--bg-surface)]">
+                <th onClick={() => handleSort("txid")} className="py-3 px-3 cursor-pointer hover:text-slate-900 dark:hover:text-white transition select-none">
+                  TXID {getSortIcon("txid")}
+                </th>
+                <th onClick={() => handleSort("band")} className="py-3 px-3 cursor-pointer hover:text-slate-900 dark:hover:text-white transition select-none">
+                  Band {getSortIcon("band")}
+                </th>
+                <th onClick={() => handleSort("risk")} className="py-3 px-3 cursor-pointer hover:text-slate-900 dark:hover:text-white transition select-none">
+                  Risk {getSortIcon("risk")}
+                </th>
+                <th onClick={() => handleSort("conf")} className="py-3 px-3 cursor-pointer hover:text-slate-900 dark:hover:text-white transition select-none">
+                  Conf {getSortIcon("conf")}
+                </th>
+                <th onClick={() => handleSort("btc")} className="py-3 px-3 cursor-pointer hover:text-slate-900 dark:hover:text-white transition select-none">
+                  BTC {getSortIcon("btc")}
+                </th>
+                <th onClick={() => handleSort("fan_out")} className="py-3 px-3 cursor-pointer hover:text-slate-900 dark:hover:text-white transition select-none">
+                  Fan-Out {getSortIcon("fan_out")}
+                </th>
+                <th className="py-3 px-3">Top Feature</th>
                 <th className="py-3 px-3 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--border-subtle)] text-[11px] font-mono">
-              {leads.map((l) => (
+            <tbody className="divide-y divide-[var(--border-subtle)] text-[11px]">
+              {paginatedLeads.map((l) => (
                 <tr
                   key={l.txid}
                   onClick={() => setSelectedLead(l)}
@@ -295,7 +514,7 @@ export default function CommandCenter() {
                   <td className="py-3 px-3 text-right">
                     <Link
                       href={`/investigation/${l.txid}`}
-                      className="inline-flex items-center space-x-1 text-[10px] font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 px-2.5 py-1 rounded-md transition shadow-2xs"
+                      className="inline-flex items-center space-x-1 text-[10px] font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-[var(--border-main)] px-2.5 py-1 rounded-md transition bg-[var(--bg-surface)] shadow-2xs"
                     >
                       <span>Canvas</span>
                       <ChevronRight className="w-3 h-3" />
@@ -306,6 +525,39 @@ export default function CommandCenter() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Bar */}
+        {sorted.length > ROWS_PER_PAGE && (
+          <div className="mt-4 pt-3 border-t border-[var(--border-main)] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-slate-500 dark:text-slate-400 font-bold">
+            <div>
+              Showing <strong className="text-slate-900 dark:text-white font-bold">{(currentPage - 1) * ROWS_PER_PAGE + 1}</strong> to{" "}
+              <strong className="text-slate-900 dark:text-white font-bold">{Math.min(currentPage * ROWS_PER_PAGE, sorted.length)}</strong> of{" "}
+              <strong className="text-slate-900 dark:text-white font-bold">{sorted.length}</strong> leads
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage <= 1}
+                className="px-3 py-1 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed text-[10px] uppercase font-bold"
+              >
+                Previous
+              </button>
+
+              <span className="px-2 text-[10px] font-bold">
+                Page {currentPage} of {totalPages}
+              </span>
+
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage >= totalPages}
+                className="px-3 py-1 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed text-[10px] uppercase font-bold"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
     </div>

@@ -17,12 +17,47 @@ export default function LeadsExplorer() {
   const [sortKey, setSortKey]     = useState<SortKey>("risk");
   const [filterBand, setFilter]   = useState<FilterBand>("All");
   const [expanded, setExpanded]   = useState<string | null>(null);
+  const [page, setPage]           = useState<number>(1);
+
+  const LEADS_PER_PAGE = 12;
 
   useEffect(() => {
     const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+    const sessionData = typeof window !== "undefined" ? sessionStorage.getItem("bit_shield_session_ingest") : null;
+    if (sessionData) {
+      try {
+        const stored = JSON.parse(sessionData);
+        if (Array.isArray(stored) && stored.length > 0) {
+          setLeads(stored as Lead[]);
+          return;
+        }
+      } catch { /* keep mock default */ }
+    }
+
     fetch(`${API_BASE}/api/alerts`)
-      .then(r => r.json()).then(setLeads).catch(() => setLeads(MOCK_LEADS));
+      .then(r => r.json())
+      .then((data) => {
+        if (typeof window !== "undefined" && sessionStorage.getItem("bit_shield_session_ingest")) return;
+        setLeads(data);
+      })
+      .catch(() => setLeads(MOCK_LEADS));
   }, []);
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+    setPage(1);
+  };
+
+  const handleFilterChange = (band: FilterBand) => {
+    setFilter(band);
+    setPage(1);
+  };
+
+  const handleSortChange = (key: SortKey) => {
+    setSortKey(key);
+    setPage(1);
+  };
 
   // Keyboard shortcut: '/' to focus search
   useEffect(() => {
@@ -45,6 +80,10 @@ export default function LeadsExplorer() {
       if (sortKey === "confidence") return b.confidence_score - a.confidence_score;
       return b.amount_btc - a.amount_btc;
     });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / LEADS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedLeads = filtered.slice((currentPage - 1) * LEADS_PER_PAGE, currentPage * LEADS_PER_PAGE);
 
   return (
     <div className="space-y-5 animate-fade-in-up">
@@ -74,7 +113,7 @@ export default function LeadsExplorer() {
             id="leads-search"
             type="text"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => handleSearchChange(e.target.value)}
             placeholder="Search TXID or explanation…"
             className="w-full pl-8 pr-3 py-1.5 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[12px] font-mono text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition shadow-2xs"
           />
@@ -85,7 +124,7 @@ export default function LeadsExplorer() {
           <SlidersHorizontal className="w-3 h-3 text-slate-500 dark:text-slate-400" />
           <div className="flex gap-1 flex-wrap">
             {BAND_OPTIONS.map(band => (
-              <button key={band} onClick={() => setFilter(band)}
+              <button key={band} onClick={() => handleFilterChange(band)}
                 className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border transition-all ${
                   filterBand === band
                     ? "bg-slate-900 text-white dark:bg-white dark:text-slate-950 border-slate-900 dark:border-white font-black"
@@ -101,7 +140,7 @@ export default function LeadsExplorer() {
         <div className="flex items-center gap-1 text-[10px] font-mono text-slate-500 dark:text-slate-400">
           <span>Sort:</span>
           {(["risk", "confidence", "btc"] as SortKey[]).map(k => (
-            <button key={k} onClick={() => setSortKey(k)}
+            <button key={k} onClick={() => handleSortChange(k)}
               className={`px-2 py-0.5 rounded border transition font-bold ${
                 sortKey === k ? "border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white bg-[var(--bg-surface)]" : "border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300"
               }`}>
@@ -113,7 +152,7 @@ export default function LeadsExplorer() {
 
       {/* Leads Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filtered.map(lead => (
+        {paginatedLeads.map(lead => (
           <div key={lead.txid} className="ws-card ws-card-hover flex flex-col justify-between">
             {/* Card header */}
             <div className="p-4 border-b border-[var(--border-subtle)]">
@@ -198,12 +237,45 @@ export default function LeadsExplorer() {
           </div>
         ))}
 
-        {filtered.length === 0 && (
+        {paginatedLeads.length === 0 && (
           <div className="col-span-full ws-card p-12 text-center">
-            <p className="text-slate-500 dark:text-slate-400 font-mono text-sm">No leads match the current filters.</p>
+            <p className="text-slate-500 dark:text-slate-400 font-mono text-xs">No leads match the current filters.</p>
           </div>
         )}
       </div>
+
+      {/* Pagination Bar */}
+      {filtered.length > 0 && (
+        <div className="ws-card p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-slate-500 dark:text-slate-400 font-bold">
+          <div>
+            Showing <strong className="text-slate-900 dark:text-white font-bold">{(currentPage - 1) * LEADS_PER_PAGE + 1}</strong> to{" "}
+            <strong className="text-slate-900 dark:text-white font-bold">{Math.min(currentPage * LEADS_PER_PAGE, filtered.length)}</strong> of{" "}
+            <strong className="text-slate-900 dark:text-white font-bold">{filtered.length}</strong> leads
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={currentPage <= 1}
+              className="px-3 py-1.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed text-[10px] uppercase font-bold shadow-2xs"
+            >
+              Previous
+            </button>
+
+            <span className="px-2 text-[10px] font-bold text-slate-900 dark:text-white">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage >= totalPages}
+              className="px-3 py-1.5 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed text-[10px] uppercase font-bold shadow-2xs"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
