@@ -603,6 +603,7 @@ export default function InvestigationWorkspace() {
   const [selectedGraphNode, setSelectedGraphNode] = useState<any | null>(null);
   const [binderSaved, setBinderSaved] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [sidebarPage, setSidebarPage] = useState<number>(1);
 
   useEffect(() => {
     setIsMounted(true);
@@ -794,37 +795,74 @@ export default function InvestigationWorkspace() {
 
             {/* Entity Index Sidebar */}
             <div className="ws-card p-5 flex flex-col">
-              <SectionHeader icon={Info} title="Entity Provenance Index" subtitle="Correlated Network & Chain Nodes" />
-              <div className="space-y-2 flex-1 overflow-y-auto max-h-[460px] pr-1">
-                {(lead.neighborhood_nodes || []).map((n) => (
-                  <div
-                    key={n.id}
-                    onClick={() => setSelectedGraphNode(n)}
-                    className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer text-[10px] font-mono ${
-                      selectedGraphNode?.id === n.id
-                        ? "bg-white/[0.08] border-white/25 shadow-md"
-                        : "bg-slate-950/60 border-slate-800/60 hover:border-slate-700"
-                    }`}
-                  >
-                    <div>
-                      <div className="text-slate-200 font-semibold">{n.id}</div>
-                      <div className="text-slate-500 text-[9px] uppercase tracking-wider">{n.type}</div>
-                    </div>
-                    {n.risk !== undefined && (
-                      <span
-                        className={`font-bold px-2 py-0.5 rounded ${
-                          n.risk >= 70
-                            ? "text-red-400 bg-red-950/40 border border-red-800/50"
-                            : n.risk >= 40
-                            ? "text-amber-400 bg-amber-950/40 border border-amber-800/50"
-                            : "text-slate-400 bg-slate-900 border border-slate-800"
-                        }`}
-                      >
-                        Risk {n.risk}
-                      </span>
-                    )}
-                  </div>
-                ))}
+              <div className="flex items-center justify-between mb-4">
+                <SectionHeader icon={Info} title="Entity Provenance Index" subtitle="Correlated Network & Chain Nodes" />
+                <span className="text-[10px] font-mono text-slate-500 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">
+                  {(lead.neighborhood_nodes || []).length} Nodes
+                </span>
+              </div>
+              <div className="space-y-2 flex-1 overflow-y-auto max-h-[420px] pr-1">
+                {(() => {
+                  const allNodes = lead.neighborhood_nodes || [];
+                  const NODES_PER_PAGE = 10;
+                  const totalNodePages = Math.max(1, Math.ceil(allNodes.length / NODES_PER_PAGE));
+                  const curPage = Math.min(sidebarPage, totalNodePages);
+                  const pagedNodes = allNodes.slice((curPage - 1) * NODES_PER_PAGE, curPage * NODES_PER_PAGE);
+
+                  return (
+                    <>
+                      {pagedNodes.map((n) => (
+                        <div
+                          key={n.id}
+                          onClick={() => setSelectedGraphNode(n)}
+                          className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer text-[10px] font-mono ${
+                            selectedGraphNode?.id === n.id
+                              ? "bg-white/[0.08] border-white/25 shadow-md"
+                              : "bg-slate-950/60 border-slate-800/60 hover:border-slate-700"
+                          }`}
+                        >
+                          <div>
+                            <div className="text-slate-200 font-semibold">{n.id}</div>
+                            <div className="text-slate-500 text-[9px] uppercase tracking-wider">{n.type}</div>
+                          </div>
+                          {n.risk !== undefined && (
+                            <span
+                              className={`font-bold px-2 py-0.5 rounded ${
+                                n.risk >= 70
+                                  ? "text-red-400 bg-red-950/40 border border-red-800/50"
+                                  : n.risk >= 40
+                                  ? "text-amber-400 bg-amber-950/40 border border-amber-800/50"
+                                  : "text-slate-400 bg-slate-900 border border-slate-800"
+                              }`}
+                            >
+                              Risk {n.risk}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+
+                      {allNodes.length > NODES_PER_PAGE && (
+                        <div className="pt-2 mt-2 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-400">
+                          <button
+                            onClick={() => setSidebarPage(p => Math.max(1, p - 1))}
+                            disabled={curPage <= 1}
+                            className="px-2 py-1 rounded border border-slate-800 hover:border-slate-700 disabled:opacity-40 disabled:cursor-not-allowed uppercase"
+                          >
+                            Prev
+                          </button>
+                          <span>{curPage} / {totalNodePages}</span>
+                          <button
+                            onClick={() => setSidebarPage(p => Math.min(totalNodePages, p + 1))}
+                            disabled={curPage >= totalNodePages}
+                            className="px-2 py-1 rounded border border-slate-800 hover:border-slate-700 disabled:opacity-40 disabled:cursor-not-allowed uppercase"
+                          >
+                            Next
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>

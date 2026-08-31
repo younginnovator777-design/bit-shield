@@ -17,6 +17,9 @@ export default function LeadsExplorer() {
   const [sortKey, setSortKey]     = useState<SortKey>("risk");
   const [filterBand, setFilter]   = useState<FilterBand>("All");
   const [expanded, setExpanded]   = useState<string | null>(null);
+  const [page, setPage]           = useState<number>(1);
+
+  const LEADS_PER_PAGE = 12;
 
   useEffect(() => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://bit-shield.onrender.com";
@@ -41,6 +44,22 @@ export default function LeadsExplorer() {
       .catch(() => setLeads(MOCK_LEADS));
   }, []);
 
+  // Reset pagination on filter or search or sort change
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+    setPage(1);
+  };
+
+  const handleFilterChange = (band: FilterBand) => {
+    setFilter(band);
+    setPage(1);
+  };
+
+  const handleSortChange = (key: SortKey) => {
+    setSortKey(key);
+    setPage(1);
+  };
+
   // Keyboard shortcut: '/' to focus search
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -62,6 +81,10 @@ export default function LeadsExplorer() {
       if (sortKey === "confidence") return b.confidence_score - a.confidence_score;
       return b.amount_btc - a.amount_btc;
     });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / LEADS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedLeads = filtered.slice((currentPage - 1) * LEADS_PER_PAGE, currentPage * LEADS_PER_PAGE);
 
   return (
     <div className="space-y-5 animate-fade-in-up">
@@ -91,7 +114,7 @@ export default function LeadsExplorer() {
             id="leads-search"
             type="text"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => handleSearchChange(e.target.value)}
             placeholder="Search TXID or explanation…"
             className="w-full pl-8 pr-3 py-1.5 bg-slate-950/60 border border-slate-800 rounded-lg text-[12px] font-mono text-slate-200 placeholder-slate-600 focus:outline-none focus:border-slate-600 transition"
           />
@@ -102,7 +125,7 @@ export default function LeadsExplorer() {
           <SlidersHorizontal className="w-3 h-3 text-slate-500" />
           <div className="flex gap-1">
             {BAND_OPTIONS.map(band => (
-              <button key={band} onClick={() => setFilter(band)}
+              <button key={band} onClick={() => handleFilterChange(band)}
                 className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border transition-all ${
                   filterBand === band
                     ? "bg-white/[0.1] border-white/[0.2] text-white"
@@ -118,7 +141,7 @@ export default function LeadsExplorer() {
         <div className="flex items-center gap-1 text-[10px] font-mono text-slate-500">
           <span>Sort:</span>
           {(["risk", "confidence", "btc"] as SortKey[]).map(k => (
-            <button key={k} onClick={() => setSortKey(k)}
+            <button key={k} onClick={() => handleSortChange(k)}
               className={`px-2 py-0.5 rounded border transition ${
                 sortKey === k ? "border-slate-500 text-white" : "border-transparent text-slate-500 hover:text-slate-300"
               }`}>
@@ -130,7 +153,7 @@ export default function LeadsExplorer() {
 
       {/* Leads Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filtered.map(lead => (
+        {paginatedLeads.map(lead => (
           <div key={lead.txid} className="ws-card ws-card-hover flex flex-col">
             {/* Card header */}
             <div className="p-4 border-b border-white/[0.05]">
@@ -215,12 +238,45 @@ export default function LeadsExplorer() {
           </div>
         ))}
 
-        {filtered.length === 0 && (
+        {paginatedLeads.length === 0 && (
           <div className="col-span-full ws-card p-12 text-center">
             <p className="text-slate-500 font-mono text-sm">No leads match the current filters.</p>
           </div>
         )}
       </div>
+
+      {/* Pagination Bar */}
+      {filtered.length > 0 && (
+        <div className="ws-card p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-slate-400">
+          <div>
+            Showing <strong className="text-slate-200">{(currentPage - 1) * LEADS_PER_PAGE + 1}</strong> to{" "}
+            <strong className="text-slate-200">{Math.min(currentPage * LEADS_PER_PAGE, filtered.length)}</strong> of{" "}
+            <strong className="text-slate-200">{filtered.length}</strong> leads
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={currentPage <= 1}
+              className="px-3 py-1.5 rounded-lg border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 bg-white/[0.03] transition disabled:opacity-40 disabled:cursor-not-allowed text-[10px] font-bold uppercase"
+            >
+              Previous
+            </button>
+
+            <span className="px-2 text-[10px] font-bold text-slate-300">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage >= totalPages}
+              className="px-3 py-1.5 rounded-lg border border-slate-800 text-slate-300 hover:text-white hover:border-slate-700 bg-white/[0.03] transition disabled:opacity-40 disabled:cursor-not-allowed text-[10px] font-bold uppercase"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
